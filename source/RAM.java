@@ -61,7 +61,10 @@ public class RAM extends JPanel implements ActionListener {
 			memory[cnt] = new Byte();
 		}
 
-		load_memory("test_file.o"); // load memory file
+		/*
+		 * eline: Changed from test_file.as to full path
+		 */
+		load_memory("/Users/ezekielelin/Library/Mobile Documents/com~apple~CloudDocs/Developer/Lafayette/CS 203/Project 3/test_file.o"); // load memory file
 		refresh_display(); // redraw the display
 	}
 

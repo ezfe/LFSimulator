@@ -1,7 +1,7 @@
-/***
- * The hardware controler for driving data path.
+/**
+ * The hardware controller for driving data path.
  */
-public class Controler {
+public class Controller {
 
 	/* Object data fields */
 	int memory_size;
@@ -17,7 +17,7 @@ public class Controler {
 	private final int UNKNOWN = 3;
 
 	/* Primary constructor */
-	public Controler(CPU cpu) {
+	public Controller(CPU cpu) {
 		memory_size = 512;
 		data_path = cpu;
 
@@ -51,7 +51,7 @@ public class Controler {
 				System.err.println(current_entry);
 				System.err.println("--------");
 			} catch (Exception e) {
-				System.err.println("In Controler:increment_clock");
+				System.err.println("In Controller:increment_clock");
 				System.err.println(e);
 			}
 
@@ -90,10 +90,11 @@ public class Controler {
 		}
 	};
 
-	/**** FETCH: 0 ****/
-	// The RTN for fetching the instruction.
-	// Should always be in location zero of the
-	// control memory.
+	/**
+	 * FETCH 0
+	 * 
+	 * Store the program counter in the memory address register
+	 */
 	public class Fetch0 extends RTN {
 
 		public String toString() {
@@ -111,6 +112,11 @@ public class Controler {
 
 	}
 
+	/**
+	 * FETCH 1
+	 * 
+	 * Increments the program counter and loads (previous pc) to memory data register 
+	 */
 	public class Fetch1 extends RTN {
 
 		public String toString() {
@@ -127,6 +133,11 @@ public class Controler {
 		}
 	}
 
+	/**
+	 * FETCH 2
+	 * 
+	 * Moves the data from the memory data register to the instruction register
+	 */
 	public class Fetch2 extends RTN {
 
 		public String toString() {
@@ -143,11 +154,13 @@ public class Controler {
 		}
 	}
 
-	/**** No Operation: 1 ****/
-
-	// The RTN for doing nothing with the processor.
-	// Should always be in location 1 of the
-	// control memory.
+	/**
+	 * No Operation: 1
+	 * 
+	 * The RTN for doing nothing with the processor.
+	 * Should always be in location 1 of the
+	 * control memory.
+	 */
 	public class NOP extends RTN {
 
 		public String toString() {
@@ -162,12 +175,15 @@ public class Controler {
 		}
 	}
 
-	/**** Load Immediate: 2 ****/
-
-	// The RTN for implementing the add immediate operation.
-	// Should always be in location 2 of the control memory.
-	// Will pull the destination register immediate from.
-	// the IR and store in destation register
+	/**
+	 * Load Immediate: 2
+	 * 
+	 * The RTN for implementing the add immediate operation.
+	 * Should always be in location 2 of the control memory.
+	 * 
+	 * Will pull the destination register immediate from
+	 * the IR and store in destation register.
+	 */
 	public class LOADI0 extends RTN {
 
 		public String toString() {
@@ -188,7 +204,7 @@ public class Controler {
 				data_path.bank.load(destination);
 
 			} catch (Exception e) {
-				System.err.println("In Controler:LOADI0:increment_clock");
+				System.err.println("In Controller:LOADI0:increment_clock");
 				System.err.println(e);
 			}
 		}

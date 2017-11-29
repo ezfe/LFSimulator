@@ -17,8 +17,39 @@ public class CPU extends JPanel implements ActionListener {
 	protected JTextArea textArea;
 	private final static String newline = "\n";
 
-	public Register PC, IR, MA, MD, B, C;
+	/**
+	 * The program counter holds the address to the next instruction in memory
+	 */
+	public Register PC;
+	/**
+	 * The instruction register holds the value of the current instruction
+	 */
+	public Register IR;
+	/**
+	 * The memory address register contains the address to access in or store to memory
+	 */
+	public Register MA;
+	/**
+	 * The memory data register contains the data accessed or to be stored in memory
+	 */
+	public Register MD;
+	/**
+	 * The b-register holds temporary data for the ALU
+	 */
+	public Register B;
+	/**
+	 * The c-register holds result data from the ALU
+	 */
+	public Register C;
+	
+	/**
+	 * Register Bank
+	 */
 	public RegisterBank bank;
+	
+	/**
+	 * Master Bus
+	 */
 	public Bus master_bus;
 
 	private int clock_ticks;
@@ -26,7 +57,7 @@ public class CPU extends JPanel implements ActionListener {
 	private int wordsize;
 
 	public RAM main_memory;
-	private Controler controler;
+	private Controller controler;
 
 	/* Primary constructor */
 	public CPU(int wordSize, int register_cnt, RAM mem) {
@@ -63,7 +94,7 @@ public class CPU extends JPanel implements ActionListener {
 		general_purpose_reg_cnt = register_cnt;
 		wordsize = wordSize;
 		main_memory = mem;
-		controler = new Controler(this);
+		controler = new Controller(this);
 
 		master_bus = new Bus(wordsize);
 
