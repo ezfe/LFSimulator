@@ -1,258 +1,246 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import java.util.Hashtable;
- 
 import javax.swing.*;
-import javax.swing.text.*;
-
 import java.awt.*;
 import java.awt.event.*;
 
 /***
-  * Memory simulation, including visual representation.
-  */
+ * Memory simulation, including visual representation.
+ */
 public class RAM extends JPanel implements ActionListener {
 
-  /* Object data fields */
-  protected JButton button;
+	private static final long serialVersionUID = -7683041314100735717L;
 
-  protected JTextArea textArea;
-  private final static String newline = "\n";
+	/* Object data fields */
+	protected JButton button;
 
-  private Byte memory[];
-  private int  size;
-  private int  byte_width;
-  private int  last_access;
-  
-  private Register address_register;
-  private Register data_register;
+	protected JTextArea textArea;
+	private final static String newline = "\n";
 
-  /* Primary constructor */
-  public RAM(int sizeValue, int byteWidth) {
-    
-      super(new GridBagLayout());
+	private Byte memory[];
+	private int size;
+	private int byte_width;
+	private int last_access;
 
-      button = new JButton("Refresh");
-      button.addActionListener(this);
+	private Register address_register;
+	private Register data_register;
 
-      textArea = new JTextArea(30, 70);
-      textArea.setFont(new Font("Courier", Font.PLAIN, 16));
-      textArea.setEditable(false);
-      JScrollPane scrollPane = new JScrollPane(textArea);
+	/* Primary constructor */
+	public RAM(int sizeValue, int byteWidth) {
 
-      //Add Components to this panel.
-      GridBagConstraints c = new GridBagConstraints();
-      c.gridwidth = GridBagConstraints.REMAINDER;
+		super(new GridBagLayout());
 
-      c.fill = GridBagConstraints.HORIZONTAL;
-      add(button, c);
+		button = new JButton("Refresh");
+		button.addActionListener(this);
 
-      c.fill = GridBagConstraints.BOTH;
-      c.weightx = 1.0;
-      c.weighty = 1.0;
-      add(scrollPane, c);
+		textArea = new JTextArea(30, 70);
+		textArea.setFont(new Font("Courier", Font.PLAIN, 16));
+		textArea.setEditable(false);
+		JScrollPane scrollPane = new JScrollPane(textArea);
 
-      size        = sizeValue;      // store memory organization
-      byte_width  = byteWidth;
-      last_access = 0;
+		// Add Components to this panel.
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridwidth = GridBagConstraints.REMAINDER;
 
-      memory     = new Byte[size];  // construct memory
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(button, c);
 
-      for(int cnt = 0; cnt < size; cnt++) {
-        memory[cnt] = new Byte();
-      }
+		c.fill = GridBagConstraints.BOTH;
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		add(scrollPane, c);
 
-      load_memory("test_file.as");  // load memory file
-      refresh_display();            // redraw the display
-  }
+		size = sizeValue; // store memory organization
+		byte_width = byteWidth;
+		last_access = 0;
 
-  public void actionPerformed(ActionEvent evt) {
+		memory = new Byte[size]; // construct memory
 
-    if (evt.getActionCommand().equals("Refresh")) {
-      refresh_display();
-    } else {
-      System.err.println ("Unknown action (RAM.java): " + 
-                          evt.getActionCommand());
-    }
-  }
+		for (int cnt = 0; cnt < size; cnt++) {
+			memory[cnt] = new Byte();
+		}
 
-  /**
-   * Create the GUI and show it.  For thread safety,
-   * this method should be invoked from the
-   * event dispatch thread.
-   */
-  public static RAM createAndShowGUI(int sizeValue, int byteWidth) {
-      //Create and set up the window.
-      JFrame frame = new JFrame("RAM");
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		load_memory("test_file.as"); // load memory file
+		refresh_display(); // redraw the display
+	}
 
-      //Add contents to the window.
-      RAM mem = new RAM(sizeValue, byteWidth);
-      frame.add(mem);
+	public void actionPerformed(ActionEvent evt) {
 
-      //Display the window.
-      frame.pack();
-      frame.setVisible(true);
-      
-      return mem;
-  }
+		if (evt.getActionCommand().equals("Refresh")) {
+			refresh_display();
+		} else {
+			System.err.println("Unknown action (RAM.java): " + evt.getActionCommand());
+		}
+	}
 
-  public void load_memory(String file_name) {
+	/**
+	 * Create the GUI and show it. For thread safety, this method should be invoked
+	 * from the event dispatch thread.
+	 */
+	public static RAM createAndShowGUI(int sizeValue, int byteWidth) {
+		// Create and set up the window.
+		JFrame frame = new JFrame("RAM");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    Scanner sc = null;       // initialize and create scanner mechanism
-    String   curr_line;
+		// Add contents to the window.
+		RAM mem = new RAM(sizeValue, byteWidth);
+		frame.add(mem);
 
-    try {
-      sc = new Scanner(new File(file_name));
-    } catch (FileNotFoundException e) {
-      System.err.println("Error in load_memory");
-      System.err.println(e);
-    }
+		// Display the window.
+		frame.pack();
+		frame.setVisible(true);
 
-    try {                    // load file into memory
-      
-      int line_cnt = 0;
+		return mem;
+	}
 
-      while (sc.hasNextLine()) {
-        
-        curr_line = sc.nextLine();               // get next line
-        // System.out.println(">>>>" + curr_line + "<<<<");
-        
-        if(curr_line.length() == 0) continue;    // skip blank lines
-        
-        for(int cnt = 0; cnt <= byte_width; cnt += 2 ) {
-          memory[(line_cnt * byte_width) + (cnt / 2)].store(
-            String.format("%c%c", 
-                          curr_line.charAt(cnt),
-                          curr_line.charAt(cnt+1)
-            )
-          );
-          
-        }
+	public void load_memory(String file_name) {
 
-        line_cnt++;
-      }
-    } catch (Exception e) {
-      System.out.println(e);
-    }
+		Scanner sc = null; // initialize and create scanner mechanism
+		String curr_line;
 
-    last_access = 0;
-  }
+		try {
+			sc = new Scanner(new File(file_name));
+		} catch (FileNotFoundException e) {
+			System.err.println("Error in load_memory");
+			System.err.println(e);
+		}
 
-  public void refresh_display() {
+		try { // load file into memory
 
-    // textArea.setText(""); // clears the text
-    textArea.setText(build_display()); // stores memory as a string to widget
-  }
+			int line_cnt = 0;
 
-  public String build_display(){
-    
-    int    offset = 0;
-    String result = "    Address  Hex Display   Binary Display" + newline;
+			while (sc.hasNextLine()) {
 
-    result +=       "    -------  ------------  --------------" + newline;
-    
-    for (int cnt = 0; cnt < size; cnt += byte_width) {
+				curr_line = sc.nextLine(); // get next line
+				// System.out.println(">>>>" + curr_line + "<<<<");
 
-      if(cnt == last_access) {                    // add pointer code here
-        result += "==> ";
-      } else {
-        result += "    ";
-      }
+				if (curr_line.length() == 0)
+					continue; // skip blank lines
 
-      result += String.format("0x%05X  ", cnt);   // display address column
+				for (int cnt = 0; cnt <= byte_width; cnt += 2) {
+					memory[(line_cnt * byte_width) + (cnt / 2)]
+							.store(String.format("%c%c", curr_line.charAt(cnt), curr_line.charAt(cnt + 1)));
 
-      offset = 12 - (byte_width * 2);  // compute offset between hex and bin
+				}
 
-      for (int cnt2 = 0; cnt2 < byte_width; cnt2++) { // display hex value
-        result += memory[cnt + cnt2].hex();
-      }
-      
-      for (int cnt2 = 0; cnt2 < offset; cnt2++) {     // add offset
-        result += " ";
-      }
+				line_cnt++;
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 
-      result += "  ";
+		last_access = 0;
+	}
 
-      for (int cnt2 = 0; cnt2 < byte_width; cnt2++) { // display binary value
-        result += memory[cnt + cnt2].binary() + " ";
-      }
+	public void refresh_display() {
+		// textArea.setText(""); // clears the text
+		textArea.setText(build_display()); // stores memory as a string to widget
+	}
 
-      result += newline;
-    }
-    
-    return result;
-  }
+	public String build_display() {
 
-  public String getMemoryWord_binary(int address) {
-    
-    String result = "";
+		int offset = 0;
+		String result = "    Address  Hex Display   Binary Display" + newline;
 
-    last_access = address;
+		result += "    -------  ------------  --------------" + newline;
 
-    for(int cnt = 0; cnt < byte_width; cnt++) {
-      
-      result += memory[address + cnt].binary();
-    }
+		for (int cnt = 0; cnt < size; cnt += byte_width) {
 
-    return result;
-  }
+			if (cnt == last_access) { // add pointer code here
+				result += "==> ";
+			} else {
+				result += "    ";
+			}
 
-  public String getMemoryWord_hex(int address) {
-    
-    String result = "";
+			result += String.format("0x%05X  ", cnt); // display address column
 
-    last_access = address;
+			offset = 12 - (byte_width * 2); // compute offset between hex and bin
 
-    for(int cnt = 0; cnt < byte_width; cnt++) {
-      
-      result += memory[address + cnt].hex();
-    }
+			for (int cnt2 = 0; cnt2 < byte_width; cnt2++) { // display hex value
+				result += memory[cnt + cnt2].hex();
+			}
 
-    return result;
-  }
+			for (int cnt2 = 0; cnt2 < offset; cnt2++) { // add offset
+				result += " ";
+			}
 
-  public void setMemoryWord(int address, String value) {
-    
-    last_access = address;
+			result += "  ";
 
-    try {
-      for(int cnt = 0; cnt < byte_width; cnt++) {
-        memory[address + cnt].store(value.substring((cnt*2), (cnt*2)+1));
-      }
-    } catch (Exception e) {
-      System.err.println("In RAM:setMemoryWord.");
-      System.err.println(e);
-    }
+			for (int cnt2 = 0; cnt2 < byte_width; cnt2++) { // display binary value
+				result += memory[cnt + cnt2].binary() + " ";
+			}
 
-    refresh_display();
-  }
+			result += newline;
+		}
 
-  public void set_address_register(Register reg) {
-    address_register = reg;
-  }
+		return result;
+	}
 
-  public void set_data_register(Register reg) {
-    data_register = reg;
-  }
+	public String getMemoryWord_binary(int address) {
 
-  public void memory_load() {
-    
-    int address = address_register.decimal();
-    // System.err.println(address);
-    // System.err.println(getMemoryWord(address));
-    data_register.store(getMemoryWord_hex(address));
-  }
+		String result = "";
 
-  public void memory_store() {
-    int address = address_register.decimal();
-    setMemoryWord(address, data_register.hex());
-    refresh_display();
-  }
-  
+		last_access = address;
+
+		for (int cnt = 0; cnt < byte_width; cnt++) {
+
+			result += memory[address + cnt].binary();
+		}
+
+		return result;
+	}
+
+	public String getMemoryWord_hex(int address) {
+
+		String result = "";
+
+		last_access = address;
+
+		for (int cnt = 0; cnt < byte_width; cnt++) {
+
+			result += memory[address + cnt].hex();
+		}
+
+		return result;
+	}
+
+	public void setMemoryWord(int address, String value) {
+
+		last_access = address;
+
+		try {
+			for (int cnt = 0; cnt < byte_width; cnt++) {
+				memory[address + cnt].store(value.substring((cnt * 2), (cnt * 2) + 1));
+			}
+		} catch (Exception e) {
+			System.err.println("In RAM:setMemoryWord.");
+			System.err.println(e);
+		}
+
+		refresh_display();
+	}
+
+	public void set_address_register(Register reg) {
+		address_register = reg;
+	}
+
+	public void set_data_register(Register reg) {
+		data_register = reg;
+	}
+
+	public void memory_load() {
+
+		int address = address_register.decimal();
+		// System.err.println(address);
+		// System.err.println(getMemoryWord(address));
+		data_register.store(getMemoryWord_hex(address));
+	}
+
+	public void memory_store() {
+		int address = address_register.decimal();
+		setMemoryWord(address, data_register.hex());
+		refresh_display();
+	}
+
 }
-
