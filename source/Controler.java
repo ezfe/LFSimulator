@@ -18,7 +18,6 @@ public class Controler {
 
 	/* Primary constructor */
 	public Controler(CPU cpu) {
-
 		memory_size = 512;
 		data_path = cpu;
 
@@ -29,7 +28,6 @@ public class Controler {
 	}
 
 	public void increment_clock() {
-
 		System.err.println(control_memory[current_entry]);
 		control_memory[current_entry].execute();
 
@@ -67,12 +65,10 @@ public class Controler {
 	}
 
 	public void reset() {
-
 		current_entry = 0;
 	}
 
 	public void load_cntl_code_1() {
-
 		control_memory[0] = new Fetch0();
 		control_memory[1] = new Fetch1();
 		control_memory[2] = new Fetch2();
@@ -81,7 +77,6 @@ public class Controler {
 	}
 
 	public class RTN {
-
 		public String toString() {
 			return new String("RTN parent toString method.");
 		}

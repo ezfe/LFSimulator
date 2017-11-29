@@ -165,7 +165,6 @@ public class CPU extends JPanel implements ActionListener {
 	}
 
 	public String build_display() {
-
 		int offset = 0;
 		String result = "";
 

@@ -16,12 +16,10 @@ public class Byte {
 	}
 
 	public String hex() {
-
 		int pow_value = 1;
 		int value = 0;
 
 		for (int index = 0; index < 8; index++) {
-
 			if (bits[index] == 1) {
 				value += pow_value;
 			}
@@ -32,11 +30,9 @@ public class Byte {
 	}
 
 	public String binary() {
-
 		String result = "";
 
 		for (int index = 7; index >= 0; index--) {
-
 			if (bits[index] == 1) {
 				result += "1";
 			} else {
@@ -48,11 +44,9 @@ public class Byte {
 	}
 
 	public String binary(int high, int low) {
-
 		String result = "";
 
 		for (int index = high; index >= low; index--) {
-
 			if (bits[index] == 1) {
 				result += "1";
 			} else {
@@ -64,10 +58,10 @@ public class Byte {
 	}
 
 	public void store(int value) throws Exception {
-
 		// System.err.println("--" + value + "--");
-		if (value < 0 || 255 < value)
+		if (value < 0 || 255 < value) {
 			throw new Exception("Passed value is too large for Byte");
+		}
 
 		for (int index = 0; index < 8; index++) {
 			bits[index] = value % 2;
@@ -76,10 +70,10 @@ public class Byte {
 	}
 
 	public void store(String value) throws Exception {
-
 		// System.err.println("--" + value + "--");
-		if (value.length() != 2)
+		if (value.length() != 2) {
 			throw new Exception("Passed value is not the right length for Byte");
+		}
 
 		int int_value = Integer.parseInt(value, 16);
 

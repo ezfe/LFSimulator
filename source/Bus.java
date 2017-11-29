@@ -36,11 +36,9 @@ public class Bus {
 	}
 
 	public String binary() {
-
 		String result = "";
 
 		for (int index = (bits.length - 1); index >= 0; index--) {
-
 			if (bits[index] == 1) {
 				result += "1";
 			} else {
@@ -52,14 +50,13 @@ public class Bus {
 	}
 
 	public String binary(int high, int low) throws Exception {
-
 		String result = "";
 
-		if (low > high)
+		if (low > high) {
 			throw new Exception("Binary range values should have a low " + "value less than or equal to the high");
+		}
 
 		for (int index = high; index >= low; index--) {
-
 			if (bits[index] == 1) {
 				result += "1";
 			} else {
@@ -73,8 +70,9 @@ public class Bus {
 	public void store(int value) throws Exception {
 
 		// System.err.println("--" + value + "--");
-		if (value < 0 && 255 < value)
+		if (value < 0 && 255 < value) {
 			throw new Exception("Passed value is too large for Bus");
+		}
 
 		for (int index = 0; index < bits.length; index++) {
 			bits[index] = value % 2;
@@ -85,8 +83,9 @@ public class Bus {
 	public void store(String value) throws Exception {
 
 		// System.err.println("--" + value + "--");
-		if (value.length() != 2)
+		if (value.length() != 2) {
 			throw new Exception("Passed value is not the right length for Bus");
+		}
 
 		int int_value = Integer.parseInt(value, 16);
 

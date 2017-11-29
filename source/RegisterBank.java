@@ -25,47 +25,46 @@ public class RegisterBank {
 	}
 
 	public void set_source_bus(Bus bus) {
-
 		for (int index = 0; index < register_cnt; index++) {
 			registers[index].set_source_bus(bus);
 		}
 	}
 
 	public void set_destination_bus(Bus bus) {
-
 		for (int index = 0; index < register_cnt; index++) {
 			registers[index].set_destination_bus(bus);
 		}
 	}
 
 	public void load(int register_id) throws Exception {
-
-		if (register_id < 0 || register_cnt <= register_id)
+		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank binary register_id out of range.");
+		}
 
 		registers[register_id].load();
 	}
 
 	public void store(int register_id) throws Exception {
-
-		if (register_id < 0 || register_cnt <= register_id)
+		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank binary register_id out of range.");
+		}
 
 		registers[register_id].store();
 	}
 
 	public void increment(int register_id) throws Exception {
-
-		if (register_id < 0 || register_cnt <= register_id)
+		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank binary register_id out of range.");
+		}
 
 		registers[register_id].increment();
 	}
 
 	public void negate(int register_id) throws Exception {
 
-		if (register_id < 0 || register_cnt <= register_id)
+		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank binary register_id out of range.");
+		}
 
 		registers[register_id].negate();
 	}

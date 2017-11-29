@@ -61,12 +61,11 @@ public class RAM extends JPanel implements ActionListener {
 			memory[cnt] = new Byte();
 		}
 
-		load_memory("test_file.as"); // load memory file
+		load_memory("test_file.o"); // load memory file
 		refresh_display(); // redraw the display
 	}
 
 	public void actionPerformed(ActionEvent evt) {
-
 		if (evt.getActionCommand().equals("Refresh")) {
 			refresh_display();
 		} else {
@@ -107,16 +106,15 @@ public class RAM extends JPanel implements ActionListener {
 		}
 
 		try { // load file into memory
-
 			int line_cnt = 0;
 
 			while (sc.hasNextLine()) {
-
 				curr_line = sc.nextLine(); // get next line
 				// System.out.println(">>>>" + curr_line + "<<<<");
 
-				if (curr_line.length() == 0)
+				if (curr_line.length() == 0) {
 					continue; // skip blank lines
+				}
 
 				for (int cnt = 0; cnt <= byte_width; cnt += 2) {
 					memory[(line_cnt * byte_width) + (cnt / 2)]
@@ -139,14 +137,12 @@ public class RAM extends JPanel implements ActionListener {
 	}
 
 	public String build_display() {
-
 		int offset = 0;
 		String result = "    Address  Hex Display   Binary Display" + newline;
 
 		result += "    -------  ------------  --------------" + newline;
 
 		for (int cnt = 0; cnt < size; cnt += byte_width) {
-
 			if (cnt == last_access) { // add pointer code here
 				result += "==> ";
 			} else {
@@ -184,7 +180,6 @@ public class RAM extends JPanel implements ActionListener {
 		last_access = address;
 
 		for (int cnt = 0; cnt < byte_width; cnt++) {
-
 			result += memory[address + cnt].binary();
 		}
 
@@ -198,7 +193,6 @@ public class RAM extends JPanel implements ActionListener {
 		last_access = address;
 
 		for (int cnt = 0; cnt < byte_width; cnt++) {
-
 			result += memory[address + cnt].hex();
 		}
 
@@ -230,7 +224,6 @@ public class RAM extends JPanel implements ActionListener {
 	}
 
 	public void memory_load() {
-
 		int address = address_register.decimal();
 		// System.err.println(address);
 		// System.err.println(getMemoryWord(address));
