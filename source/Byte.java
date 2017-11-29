@@ -3,10 +3,10 @@
  */
 public class Byte {
 
-	/* Object data fields */
+	/** Object data fields */
 	private int bits[];
 
-	/* Primary constructor */
+	/** Primary constructor */
 	public Byte() {
 		bits = new int[8];
 
@@ -15,6 +15,11 @@ public class Byte {
 		}
 	}
 
+	/**
+	 * Convert to hex string
+	 * 
+	 * @return The hex representation
+	 */
 	public String hex() {
 		int pow_value = 1;
 		int value = 0;
@@ -29,6 +34,10 @@ public class Byte {
 		return String.format("%02X", value);
 	}
 
+	/**
+	 * Convert to binary string
+	 * @return The binary representation
+	 */
 	public String binary() {
 		String result = "";
 
@@ -43,6 +52,12 @@ public class Byte {
 		return result;
 	}
 
+	/**
+	 * Convert certain range to binary string
+	 * @param high High bit
+	 * @param low Low bit
+	 * @return The binary representation of the range
+	 */
 	public String binary(int high, int low) {
 		String result = "";
 
@@ -57,10 +72,15 @@ public class Byte {
 		return result;
 	}
 
+	/**
+	 * Update with a numerical value
+	 * @param value The value
+	 * @throws Exception
+	 */
 	public void store(int value) throws Exception {
 		// System.err.println("--" + value + "--");
 		if (value < 0 || 255 < value) {
-			throw new Exception("Passed value is too large for Byte");
+			throw new Exception("Passed value is too large for Byte (" + value + ", should be [0, 255])");
 		}
 
 		for (int index = 0; index < 8; index++) {
@@ -69,7 +89,16 @@ public class Byte {
 		}
 	}
 
-	public void store(String value) throws Exception {
+	/*
+	 * eline: Renamed to storeHex(value:) for clarity
+	 */
+	
+	/**
+	 * Update with a 
+	 * @param value
+	 * @throws Exception
+	 */
+	public void storeHex(String value) throws Exception {
 		// System.err.println("--" + value + "--");
 		if (value.length() != 2) {
 			throw new Exception("Passed value is not the right length for Byte");
@@ -77,15 +106,14 @@ public class Byte {
 
 		int int_value = Integer.parseInt(value, 16);
 
-		for (int index = 0; index < 8; index++) {
-			bits[index] = int_value % 2;
-			int_value = int_value / 2;
-		}
+		/*
+		 * eline: changed to call existing function
+		 */
+		this.store(int_value);
 	}
 
 	public static void main(String args[]) {
-
-		/*** Examples of usage. ***/
+		/* Examples of usage. */
 		Byte a = new Byte();
 
 		try {
@@ -97,13 +125,13 @@ public class Byte {
 			a.store(5);
 			System.out.println(a.binary(2, 0));
 
-			a.store("AB");
+			a.storeHex("AB");
 			System.out.println(a.binary());
 
-			a.store("D9");
+			a.storeHex("D9");
 			System.out.println(a.binary());
 
-			a.store("00");
+			a.storeHex("00");
 			System.out.println(a.hex());
 			System.out.println(a.binary());
 

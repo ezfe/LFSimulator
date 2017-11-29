@@ -8,9 +8,9 @@ public class Bus {
 	private int wordsize;
 
 	/* Primary constructor */
-	public Bus(int _wordsize) {
+	public Bus(int wordsize) {
 
-		wordsize = _wordsize;
+		this.wordsize = wordsize;
 
 		bits = new int[wordsize];
 

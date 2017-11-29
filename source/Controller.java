@@ -5,6 +5,7 @@ public class Controller {
 
 	/* Object data fields */
 	int memory_size;
+	private final int INSTRUCTION_SPACE = 5;
 	RTN control_memory[];
 	CPU data_path;
 
@@ -22,7 +23,7 @@ public class Controller {
 		data_path = cpu;
 
 		control_memory = new RTN[memory_size];
-		load_cntl_code_1();
+		populateControlMemory();
 
 		reset();
 	}
@@ -45,7 +46,7 @@ public class Controller {
 
 		case CMDNAME: {
 			try {
-				current_entry = (data_path.IR.decimal(15, 12) + 1) * 5;
+				current_entry = (data_path.IR.decimal(15, 12) + 1) * INSTRUCTION_SPACE;
 				System.err.println("--------");
 				System.err.println(data_path.IR.binary());
 				System.err.println(current_entry);
@@ -68,12 +69,25 @@ public class Controller {
 		current_entry = 0;
 	}
 
-	public void load_cntl_code_1() {
+	/*
+	 * eline: Renamed to populateControlMemory() for clarity
+	 */
+	public void populateControlMemory() {
+		/* Set up the fetch instructions */
 		control_memory[0] = new Fetch0();
 		control_memory[1] = new Fetch1();
 		control_memory[2] = new Fetch2();
-		control_memory[5] = new NOP();
-		control_memory[10] = new LOADI0();
+		
+		/* Load the instructions */
+		addInstruction(new NOP(), 0);
+		addInstruction(new LOADI0(), 1);
+	}
+	
+	/*
+	 * eline: Created for cleaned adding process
+	 */
+	private void addInstruction(RTN ins, int opcode) {
+		control_memory[(opcode + 1) * INSTRUCTION_SPACE] = ins;
 	}
 
 	public class RTN {
@@ -118,7 +132,6 @@ public class Controller {
 	 * Increments the program counter and loads (previous pc) to memory data register 
 	 */
 	public class Fetch1 extends RTN {
-
 		public String toString() {
 			return new String("Fetch1");
 		}
@@ -155,14 +168,13 @@ public class Controller {
 	}
 
 	/**
-	 * No Operation: 1
+	 * No Operation (0)
 	 * 
 	 * The RTN for doing nothing with the processor.
 	 * Should always be in location 1 of the
 	 * control memory.
 	 */
-	public class NOP extends RTN {
-
+	public class NOP extends RTN {		
 		public String toString() {
 			return new String("NOP");
 		}
@@ -176,13 +188,10 @@ public class Controller {
 	}
 
 	/**
-	 * Load Immediate: 2
+	 * Load Immediate (1)
 	 * 
-	 * The RTN for implementing the add immediate operation.
-	 * Should always be in location 2 of the control memory.
-	 * 
-	 * Will pull the destination register immediate from
-	 * the IR and store in destation register.
+	 * Will store the immediate value in 
+	 * the destination register.
 	 */
 	public class LOADI0 extends RTN {
 

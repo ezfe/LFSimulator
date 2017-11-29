@@ -121,7 +121,7 @@ public class RAM extends JPanel implements ActionListener {
 
 				for (int cnt = 0; cnt <= byte_width; cnt += 2) {
 					memory[(line_cnt * byte_width) + (cnt / 2)]
-							.store(String.format("%c%c", curr_line.charAt(cnt), curr_line.charAt(cnt + 1)));
+							.storeHex(String.format("%c%c", curr_line.charAt(cnt), curr_line.charAt(cnt + 1)));
 
 				}
 
@@ -208,7 +208,7 @@ public class RAM extends JPanel implements ActionListener {
 
 		try {
 			for (int cnt = 0; cnt < byte_width; cnt++) {
-				memory[address + cnt].store(value.substring((cnt * 2), (cnt * 2) + 1));
+				memory[address + cnt].storeHex(value.substring((cnt * 2), (cnt * 2) + 1));
 			}
 		} catch (Exception e) {
 			System.err.println("In RAM:setMemoryWord.");
