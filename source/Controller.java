@@ -86,6 +86,7 @@ public class Controller {
 		/* Load the instructions */
 		addInstruction(new NOP(), 0);
 		addInstruction(new LOADI0(), 1);
+		addInstruction(new ADD(), 2);
 	}
 	
 	/*
@@ -238,6 +239,15 @@ public class Controller {
 		}
 	}
 	
+	/*
+	 * eline: Added ADD class
+	 */
+	/**
+	 * Add (2)
+	 * 
+	 * Uses the ALU to add together two register values, storing
+	 * the result in a third register
+	 */
 	public class ADD extends RTN {
 		public String toString() {
 			return "ADD";
@@ -268,6 +278,10 @@ public class Controller {
 				System.err.println("In Controller:ADD:execute");
 				System.err.println(e);
 			}
+		}
+		
+		public int advance() {
+			return START;
 		}
 	}
 

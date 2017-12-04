@@ -109,6 +109,9 @@ public class CPU extends JPanel implements ActionListener {
 		MA = new Register(wordsize);
 		MD = new Register(wordsize);
 
+		B = new Register(wordsize);
+		C = new Register(wordsize);
+		
 		bank = new RegisterBank(wordsize, general_purpose_reg_cnt);
 
 		bank.set_source_bus(master_bus);
