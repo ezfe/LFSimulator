@@ -13,7 +13,6 @@ public class RegisterBank {
 
 	/* Primary constructor */
 	public RegisterBank(int wordSize, int registerCnt) {
-
 		wordsize = wordSize;
 		register_cnt = registerCnt;
 
@@ -26,13 +25,13 @@ public class RegisterBank {
 
 	public void set_source_bus(Bus bus) {
 		for (int index = 0; index < register_cnt; index++) {
-			registers[index].set_source_bus(bus);
+			registers[index].set_source(bus);
 		}
 	}
 
 	public void set_destination_bus(Bus bus) {
 		for (int index = 0; index < register_cnt; index++) {
-			registers[index].set_destination_bus(bus);
+			registers[index].set_destination(bus);
 		}
 	}
 

@@ -30,7 +30,12 @@ public class Controller {
 
 	public void increment_clock() {
 		System.err.println(control_memory[current_entry]);
-		control_memory[current_entry].execute();
+		try {
+			control_memory[current_entry].execute();
+		} catch (Exception e) {
+			System.err.println("In Controller:increment_clock");
+			System.err.println(e);
+		}
 
 		switch (control_memory[current_entry].advance()) {
 
@@ -116,8 +121,13 @@ public class Controller {
 		}
 
 		public void execute() {
-			data_path.PC.store();
-			data_path.MA.load();
+			try {
+				data_path.PC.store();
+				data_path.MA.load();
+			} catch (Exception e) {
+				System.err.println("In Controller:Fetch0:execute");
+				System.err.println(e);
+			}
 		}
 
 		public int advance() {
@@ -158,8 +168,13 @@ public class Controller {
 		}
 
 		public void execute() {
-			data_path.MD.store();
-			data_path.IR.load();
+			try {
+				data_path.MD.store();
+				data_path.IR.load();
+			} catch (Exception e) {
+				System.err.println("In Controller:Fetch2:execute");
+				System.err.println(e);
+			}
 		}
 
 		public int advance() {
@@ -213,13 +228,46 @@ public class Controller {
 				data_path.bank.load(destination);
 
 			} catch (Exception e) {
-				System.err.println("In Controller:LOADI0:increment_clock");
+				System.err.println("In Controller:LOADI0:execute");
 				System.err.println(e);
 			}
 		}
 
 		public int advance() {
 			return START;
+		}
+	}
+	
+	public class ADD extends RTN {
+		public String toString() {
+			return "ADD";
+		}
+		
+		public void execute() {
+			// IR representation
+			// |15 12|11 08|07 04|03 00|
+			// | op  |dest |src1 |src2 |
+
+			try {
+				int source1 = data_path.IR.decimal(7, 4);
+				int source2 = data_path.IR.decimal(3, 0);
+				int destination = data_path.IR.decimal(11, 8);
+				
+				data_path.bank.store(source2);
+				data_path.B.load();
+				
+				data_path.bank.store(source1);
+				
+				//TODO: ALU always adds right now
+				
+				data_path.C.load();
+				
+				data_path.C.store();
+				data_path.bank.load(destination);
+			} catch (Exception e) {
+				System.err.println("In Controller:ADD:execute");
+				System.err.println(e);
+			}
 		}
 	}
 

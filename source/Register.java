@@ -1,52 +1,97 @@
-/***
- * Register class for implementing memory components that hang together thru the
- * bus.
+/*
+ * Changes in this file:
+ * var source
+ * func set_source
+ * func set_destination
  */
-public class Register {
+/**
+ * Register class for implementing memory components
+ * that hang together thru the bus.
+ */
+public class Register implements BitRepresenting {
 
 	/* Object data fields */
 	private int bits[];
 	private int wordsize;
 
-	private Bus source;
+	/*
+	 * eline: Changed to a BitRepresenting object
+	 */
+	private BitRepresenting source;
 	private Bus destination;
 
-	/* Primary constructor */
-	public Register(int _wordsize) {
-
-		wordsize = _wordsize;
+	/**
+	 * Create a Register
+	 * 
+	 * Initializes to zeroes
+	 * 
+	 * @param wordsize The wordsize of the register
+	 */
+	public Register(int wordsize) {
+		this.wordsize = wordsize;
 
 		bits = new int[wordsize];
-
 		for (int index = 0; index < bits.length; index++) {
 			bits[index] = 0;
 		}
 	}
 
-	public void set_source_bus(Bus bus) {
-		source = bus;
+	/*
+	 * eline: Renamed to set_source, changed parameter to BitRepresenting (from Bus)
+	 */
+	/**
+	 * Set the source of the register
+	 * @param bus The source
+	 */
+	public void set_source(BitRepresenting source) {
+		this.source = source;
 	}
 
-	public void set_destination_bus(Bus bus) {
+	/*
+	 * eline: Renamed to set_destination (from set_destination_bus)
+	 */
+	/**
+	 * Set the destination bus of the register
+	 * @param bus The destination bus
+	 */
+	public void set_destination(Bus bus) {
 		destination = bus;
 	}
 
+	/**
+	 * Load the source into this register
+	 */
 	public void load() {
+		int[] srcBits = source.getBits();
 		for (int cnt = 0; cnt < wordsize; cnt++) {
-			bits[cnt] = source.bits[cnt];
+			bits[cnt] = srcBits[cnt];
 		}
 	}
 
-	public void store() {
+	/**
+	 * Store this register into the destination
+	 */
+	public void store() throws Exception {
+		if (destination == null) {
+			throw new Exception("There is no destination object");
+		}
+		
 		for (int cnt = 0; cnt < wordsize; cnt++) {
 			destination.bits[cnt] = bits[cnt];
 		}
 	}
 
+	/**
+	 * Increment this register by 1
+	 */
 	public void increment() {
 		increment(1);
 	}
 
+	/**
+	 * Increment this register by 1 a certain number of times
+	 * @param times The number of times to increment the register by 1
+	 */
 	public void increment(int times) {
 		for (int cnt = 0; cnt < times; cnt++) {
 			int carry = 1;
@@ -64,6 +109,9 @@ public class Register {
 		}
 	}
 
+	/**
+	 * Negate the register (takes the ones-complement and increments)
+	 */
 	public void negate() {
 		for (int cnt = 0; cnt < wordsize; cnt++) {
 			if (bits[cnt] == 1) {
@@ -76,6 +124,10 @@ public class Register {
 		increment();
 	}
 
+	/**
+	 * Convert the register to an integer
+	 * @return The integer representation of the register
+	 */
 	public int decimal() {
 		int pow_value = 1;
 		int value = 0;
@@ -90,9 +142,16 @@ public class Register {
 		return value;
 	}
 
+	/**
+	 * Convert a range of the register to decimal
+	 * @param high The high bound
+	 * @param low The low bound
+	 * @return The integer representation of the range
+	 * @throws Exception
+	 */
 	public int decimal(int high, int low) throws Exception {
 		if (low > high) {
-			throw new Exception("Binary range values should have a low " + "value less than or equal to the high");
+			throw new Exception("Binary range values should have a low value less than or equal to the high");
 		}
 		
 		int pow_value = 1;
@@ -106,6 +165,10 @@ public class Register {
 		return value;
 	}
 
+	/**
+	 * Convert to a hex string
+	 * @return The hex representation
+	 */
 	public String hex() {
 		int pow_value = 1;
 		int value = 0;
@@ -120,6 +183,10 @@ public class Register {
 		return String.format("%02X", value);
 	}
 
+	/**
+	 * Convert to a binary string
+	 * @return The binary representation
+	 */
 	public String binary() {
 		String result = "";
 
@@ -134,11 +201,18 @@ public class Register {
 		return result;
 	}
 
+	/**
+	 * Convert a range of the register to a binary string
+	 * @param high The high bound
+	 * @param low The low bound
+	 * @return The binary representation of the range
+	 * @throws Exception
+	 */
 	public String binary(int high, int low) throws Exception {
 		String result = "";
 
 		if (low > high) {
-			throw new Exception("Binary range values should have a low " + "value less than or equal to the high");
+			throw new Exception("Binary range values should have a low value less than or equal to the high");
 		}
 
 		for (int index = high; index >= low; index--) {
@@ -151,7 +225,23 @@ public class Register {
 
 		return result;
 	}
+	
+	/**
+	 * Get the value of the register
+	 * @return Array of bits
+	 */
+	public int[] getBits() {
+		int[] bits = new int[wordsize];
+		for (int index = 0; index < wordsize; index++) {
+			bits[index] = this.bits[index];
+		}
+		return bits;
+	}
 
+	/**
+	 * Store a decimal value in the register
+	 * @param value The integer value to store
+	 */
 	public void store(int value) {
 		for (int index = 0; index < bits.length; index++) {
 			bits[index] = value % 2;
@@ -159,6 +249,10 @@ public class Register {
 		}
 	}
 
+	/**
+	 * Store a hex value in the register
+	 * @param value The hex string to store
+	 */
 	public void store(String value) {
 		int int_value = Integer.parseInt(value, 16);
 

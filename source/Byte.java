@@ -1,7 +1,7 @@
 /***
  * Low-level class for storing a single byte of information, 8-bits.
  */
-public class Byte {
+public class Byte implements BitRepresenting {
 
 	/** Object data fields */
 	private int bits[];
@@ -16,8 +16,7 @@ public class Byte {
 	}
 
 	/**
-	 * Convert to hex string
-	 * 
+	 * Convert to a hex string
 	 * @return The hex representation
 	 */
 	public String hex() {
@@ -53,9 +52,9 @@ public class Byte {
 	}
 
 	/**
-	 * Convert certain range to binary string
-	 * @param high High bit
-	 * @param low Low bit
+	 * Convert a range of the byte to a binary string
+	 * @param high The high bound
+	 * @param low The low bound
 	 * @return The binary representation of the range
 	 */
 	public String binary(int high, int low) {
@@ -70,6 +69,18 @@ public class Byte {
 		}
 
 		return result;
+	}
+	
+	/**
+	 * Get the value of the register
+	 * @return Array of bits
+	 */
+	public int[] getBits() {
+		int[] bits = new int[8];
+		for (int index = 0; index < 8; index++) {
+			bits[index] = this.bits[index];
+		}
+		return bits;
 	}
 
 	/**

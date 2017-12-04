@@ -1,7 +1,7 @@
 /***
  * Bus class used for temporarily storing values between registers.
  */
-public class Bus {
+public class Bus implements BitRepresenting {
 
 	/* Object data fields */
 	public int bits[];
@@ -49,6 +49,13 @@ public class Bus {
 		return result;
 	}
 
+	/**
+	 * Convert a range of the register to a binary string
+	 * @param high The high bound
+	 * @param low The low bound
+	 * @return The binary representation of the range
+	 * @throws Exception
+	 */
 	public String binary(int high, int low) throws Exception {
 		String result = "";
 
@@ -67,6 +74,14 @@ public class Bus {
 		return result;
 	}
 
+	public int[] getBits() {
+		int[] bits = new int[wordsize];
+		for (int index = 0; index < wordsize; index++) {
+			bits[index] = this.bits[index];
+		}
+		return bits;
+	}
+	
 	public void store(int value) throws Exception {
 
 		// System.err.println("--" + value + "--");

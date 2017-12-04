@@ -33,6 +33,7 @@ public class CPU extends JPanel implements ActionListener {
 	 * The memory data register contains the data accessed or to be stored in memory
 	 */
 	public Register MD;
+	
 	/**
 	 * The b-register holds temporary data for the ALU
 	 */
@@ -52,6 +53,11 @@ public class CPU extends JPanel implements ActionListener {
 	 */
 	public Bus master_bus;
 
+	/**
+	 * The Arithmetic Logical Unit
+	 */
+	public ALU alu;
+	
 	private int clock_ticks;
 	private int general_purpose_reg_cnt;
 	private int wordsize;
@@ -90,7 +96,7 @@ public class CPU extends JPanel implements ActionListener {
 		c.weighty = 1.0;
 		add(scrollPane, c);
 
-		/*** Build the machine here. ***/
+		/* --- Build the machine here. --- */
 		general_purpose_reg_cnt = register_cnt;
 		wordsize = wordSize;
 		main_memory = mem;
@@ -108,18 +114,29 @@ public class CPU extends JPanel implements ActionListener {
 		bank.set_source_bus(master_bus);
 		bank.set_destination_bus(master_bus);
 
-		PC.set_source_bus(master_bus);
-		PC.set_destination_bus(master_bus);
-		IR.set_source_bus(master_bus);
-		IR.set_destination_bus(master_bus);
-		MA.set_source_bus(master_bus);
-		MA.set_destination_bus(master_bus);
-		MD.set_source_bus(master_bus);
-		MD.set_destination_bus(master_bus);
+		PC.set_source(master_bus);
+		PC.set_destination(master_bus);
+		IR.set_source(master_bus);
+		IR.set_destination(master_bus);
+		MA.set_source(master_bus);
+		MA.set_destination(master_bus);
+		MD.set_source(master_bus);
+		MD.set_destination(master_bus);
 
 		main_memory.set_address_register(MA);
 		main_memory.set_data_register(MD);
 
+		alu = new ALU(wordsize);
+		alu.set_source_a(master_bus);
+		alu.set_source_b(B);
+		alu.set_destination(C);
+		
+		B.set_source(master_bus);
+		B.set_destination(null);
+		
+		C.set_source(alu);
+		C.set_destination(master_bus);
+		
 		reset(); // clear everything to zero
 		refresh_display(); // redraw the display
 	}
