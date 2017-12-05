@@ -75,7 +75,7 @@ public class Controller {
 	}
 
 	/*
-	 * eline: Renamed to populateControlMemory() for clarity
+	 * eline: Renamed to populateControlMemory
 	 */
 	public void populateControlMemory() {
 		/* Set up the fetch instructions */
@@ -84,16 +84,22 @@ public class Controller {
 		control_memory[2] = new Fetch2();
 		
 		/* Load the instructions */
-		addInstruction(new NOP(), 0);
-		addInstruction(new LOADI0(), 1);
-		addInstruction(new ADD(), 2);
+		control_memory[instructionStart(0)] = new NOP();
+		
+		control_memory[instructionStart(1)] = new LOADI0();
+
+		control_memory[instructionStart(2) + 0] = new ADD0();
+		control_memory[instructionStart(2) + 1] = new ADD1();
+		control_memory[instructionStart(2) + 2] = new ADD2();
+		
+		control_memory[instructionStart(3)] = new BRANCH();
 	}
 	
 	/*
-	 * eline: Created for cleaned adding process
+	 * eline: Extracted isntruction adding logic
 	 */
-	private void addInstruction(RTN ins, int opcode) {
-		control_memory[(opcode + 1) * INSTRUCTION_SPACE] = ins;
+	private int instructionStart(int opcode) {
+		return (opcode + 1) * INSTRUCTION_SPACE;
 	}
 
 	public class RTN {
@@ -240,48 +246,116 @@ public class Controller {
 	}
 	
 	/*
-	 * eline: Added ADD class
+	 * eline: Added ADD0 class
 	 */
 	/**
-	 * Add (2)
+	 * Add 0 (2)
 	 * 
-	 * Uses the ALU to add together two register values, storing
-	 * the result in a third register
+	 * Move the right hand value into B
 	 */
-	public class ADD extends RTN {
+	public class ADD0 extends RTN {
 		public String toString() {
-			return "ADD";
+			return "ADD0";
 		}
 		
 		public void execute() {
-			// IR representation
-			// |15 12|11 08|07 04|03 00|
-			// | op  |dest |src1 |src2 |
-
 			try {
-				int source1 = data_path.IR.decimal(7, 4);
-				int source2 = data_path.IR.decimal(3, 0);
-				int destination = data_path.IR.decimal(11, 8);
-				
-				data_path.bank.store(source2);
+				data_path.bank.store(data_path.IR.decimal(3, 0));
 				data_path.B.load();
+			} catch (Exception e) {
+				System.err.println("In Controller:ADD0:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return NEXT;
+		}
+	}
+	
+	/*
+	 * eline: Added ADD1 class
+	 */
+	/**
+	 * Add 1 (2)
+	 * 
+	 * Add together left hand value and B into C
+	 */
+	public class ADD1 extends RTN {
+		public String toString() {
+			return "ADD1";
+		}
+		
+		public void execute() {
+			try {
+				data_path.bank.store(data_path.IR.decimal(7, 4));
 				
-				data_path.bank.store(source1);
-				
-				//TODO: ALU always adds right now
+				data_path.alu.set_operation(ALU.Operation.ADD);
 				
 				data_path.C.load();
-				
-				data_path.C.store();
-				data_path.bank.load(destination);
 			} catch (Exception e) {
-				System.err.println("In Controller:ADD:execute");
+				System.err.println("In Controller:ADD1:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return NEXT;
+		}
+	}
+	
+	/*
+	 * eline: Added ADD2 class
+	 */
+	/**
+	 * Add 2 (2)
+	 * 
+	 * Move C into destination register
+	 */
+	public class ADD2 extends RTN {
+		public String toString() {
+			return "ADD2";
+		}
+		
+		public void execute() {
+			try {
+				data_path.C.store();
+				data_path.bank.load(data_path.IR.decimal(11, 8));
+			} catch (Exception e) {
+				System.err.println("In Controller:ADD2:execute");
 				System.err.println(e);
 			}
 		}
 		
 		public int advance() {
 			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added BRANCH class
+	 */
+	/**
+	 * Branch (3)
+	 * 
+	 * Changes the program counter appropriately
+	 */
+	public class BRANCH extends RTN {
+		public String toString() {
+			return "B";
+		}
+		
+		public void execute() {
+			// IR representation
+			// |15 12|11            00|
+			// | op  |relative address|
+			
+			try {
+				data_path.PC.increment(2 * data_path.IR.decimal(11, 0));
+			} catch (Exception e) {
+				System.err.println("In Controller:BRANCH:execute");
+				e.printStackTrace();
+			}
 		}
 	}
 
