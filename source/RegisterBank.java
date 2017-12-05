@@ -4,7 +4,6 @@
  * device.
  */
 public class RegisterBank {
-
 	/* Object data fields */
 	private Register registers[];
 
@@ -60,7 +59,6 @@ public class RegisterBank {
 	}
 
 	public void negate(int register_id) throws Exception {
-
 		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank binary register_id out of range.");
 		}
@@ -69,35 +67,35 @@ public class RegisterBank {
 	}
 
 	public String binary(int register_id) throws Exception {
-
-		if (register_id < 0 || register_cnt <= register_id)
+		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank binary register_id out of range.");
+		}
 
 		return registers[register_id].binary();
 	}
 
 	public String hex(int register_id) throws Exception {
-
-		if (register_id < 0 || register_cnt <= register_id)
+		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank binary register_id out of range.");
+		}
 
 		return registers[register_id].hex();
 	}
 
 	public void store(int value, int register_id) throws Exception {
-
-		if (register_id < 0 || register_cnt <= register_id)
+		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank store(int) register_id out of range.");
+		}
 
 		registers[register_id].store(value);
 	}
 
 	public void store(String value, int register_id) throws Exception {
-
-		if (register_id < 0 || register_cnt <= register_id)
+		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank store(str) register_id out of range.");
+		}
 
-		registers[register_id].store(value);
+		registers[register_id].storeHex(value);
 	}
 
 	public static void main(String args[]) {

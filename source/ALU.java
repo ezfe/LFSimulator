@@ -1,34 +1,52 @@
+/*
+ * eline: Created the ALU
+ */
 /**
  * Arithmetic Logical Unit
- * 
- * eline: Created the Arithmetic Logical Unit
  */
-public class ALU implements BitRepresenting {
+public class ALU extends BitRepresenting {
 //	private int control[]
 	
 	private int wordsize;
 	
-	private Bus source_a;
-	private Register source_b;
+	private BitContainer source_a;
+	private BitContainer source_b;
 	private Register destination;
 //	private flags??
 	
+	/**
+	 * Create an ALU
+	 * @param wordsize The wordsize of the ALU
+	 */
 	public ALU(int wordsize) {
-		this.wordsize = wordsize;
+		super(wordsize);
 	}
 	
-	public void set_source_a(Bus source_a) {
+	/**
+	 * Set the left hand source
+	 * @param source_a The left hand source
+	 */
+	public void set_source_a(BitContainer source_a) {
 		this.source_a = source_a;
 	}
 	
-	public void set_source_b(Register source_b) {
+	/**
+	 * Set the right hand source
+	 * @param source_b The right hand source
+	 */
+	public void set_source_b(BitContainer source_b) {
 		this.source_b = source_b;
 	}
 
+	/**
+	 * Set the destination register
+	 * @param destination The destination register
+	 */
 	public void set_destination(Register destination) {
 		this.destination = destination;
 	}
 	
+	@Override
 	public int[] getBits() {
 		return this.add(0);
 	}

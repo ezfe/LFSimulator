@@ -230,7 +230,12 @@ public class RAM extends JPanel implements ActionListener {
 		int address = address_register.decimal();
 		// System.err.println(address);
 		// System.err.println(getMemoryWord(address));
-		data_register.store(getMemoryWord_hex(address));
+		try {
+			data_register.storeHex(getMemoryWord_hex(address));
+		} catch (Exception e) {
+			System.err.println("An error occurred in RAM:memory_load");
+			e.printStackTrace();
+		}
 	}
 
 	public void memory_store() {
