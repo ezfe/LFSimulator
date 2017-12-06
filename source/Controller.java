@@ -100,35 +100,31 @@ public class Controller {
 		control_memory[instructionStart(2, 2)] = new LOAD_DEST_C();
 
 		control_memory[instructionStart(3, 0)] = new LOAD_B_IMM();
-//		control_memory[instructionStart(3, 1)] = new ADDI1();
+		control_memory[instructionStart(3, 1)] = new ADD1();
 		control_memory[instructionStart(3, 2)] = new LOAD_DEST_C();
 
 		control_memory[instructionStart(4, 0)] = new LOAD_B_IMM();
-//		control_memory[instructionStart(4, 1)] = new SUBI1();
+		control_memory[instructionStart(4, 1)] = new SUB1();
 		control_memory[instructionStart(4, 2)] = new LOAD_DEST_C();
 
 		control_memory[instructionStart(5, 0)] = new LOAD_B_RHS();
-//		control_memory[instructionStart(5, 1)] = new ADDS1();
+		control_memory[instructionStart(5, 1)] = new ADDS1();
 		control_memory[instructionStart(5, 2)] = new LOAD_DEST_C();
 		
 		control_memory[instructionStart(6, 0)] = new LOAD_B_RHS();
-//		control_memory[instructionStart(6, 1)] = new SUBS1();
+		control_memory[instructionStart(6, 1)] = new SUBS1();
 		control_memory[instructionStart(6, 2)] = new LOAD_DEST_C();
 
 		control_memory[instructionStart(7, 0)] = new LOAD_B_IMM();
-//		control_memory[instructionStart(7, 1)] = new ADDIS1();
+		control_memory[instructionStart(7, 1)] = new ADDS1();
 		control_memory[instructionStart(7, 2)] = new LOAD_DEST_C();
 		
 		control_memory[instructionStart(8, 0)] = new LOAD_B_IMM();
-//		control_memory[instructionStart(8, 1)] = new SUBIS1();
-		control_memory[instructionStart(8, 2)] = new LOAD_DEST_C();
-
-		control_memory[instructionStart(8, 0)] = new LOAD_B_IMM();
-//		control_memory[instructionStart(8, 1)] = new SUBIS1();
+		control_memory[instructionStart(8, 1)] = new SUBS1();
 		control_memory[instructionStart(8, 2)] = new LOAD_DEST_C();
 
 		control_memory[instructionStart(9, 0)] = new LOAD_B_RHS();
-//		control_memory[instructionStart(9, 1)] = new ADD1();
+//		control_memory[instructionStart(9, 1)] = new AND1();
 		control_memory[instructionStart(9, 2)] = new LOAD_DEST_C();
 		
 		control_memory[instructionStart(10, 0)] = new LOAD_B_RHS();
@@ -140,15 +136,15 @@ public class Controller {
 		control_memory[instructionStart(11, 2)] = new LOAD_DEST_C();
 
 		control_memory[instructionStart(12, 0)] = new LOAD_B_IMM();
-//		control_memory[instructionStart(12, 1)] = new ADDI1();
+//		control_memory[instructionStart(12, 1)] = new AND1();
 		control_memory[instructionStart(12, 2)] = new LOAD_DEST_C();
 		
 		control_memory[instructionStart(13, 0)] = new LOAD_B_IMM();
-//		control_memory[instructionStart(13, 1)] = new ORRI1();
+//		control_memory[instructionStart(13, 1)] = new ORR1();
 		control_memory[instructionStart(13, 2)] = new LOAD_DEST_C();
 		
 		control_memory[instructionStart(14, 0)] = new LOAD_B_IMM();
-//		control_memory[instructionStart(14, 1)] = new EORI1();
+//		control_memory[instructionStart(14, 1)] = new EOR1();
 		control_memory[instructionStart(14, 2)] = new LOAD_DEST_C();
 		
 		control_memory[instructionStart(15, 0)] = new LOAD_B_IMM();
@@ -167,8 +163,8 @@ public class Controller {
 		
 		control_memory[instructionStart(18, 0)] = new LOAD_B_IMM();
 		control_memory[instructionStart(18, 1)] = new ADD1();
-//		control_memory[instructionStart(18, 2)] = new SDUR2();
-//		control_memory[instructionStart(18, 3)] = new SDUR3();
+//		control_memory[instructionStart(18, 2)] = new STUR2();
+//		control_memory[instructionStart(18, 3)] = new STUR3();
 
 		
 		//		control_memory[instructionStart(3)] = new BRANCH();
@@ -374,16 +370,16 @@ public class Controller {
 	}
 	
 	/*
-	 * eline: Added ADD class
+	 * eline: Added ADD1 class
 	 */
 	/**
-	 * Add (2)
+	 * ADD1
 	 * 
 	 * Add together left hand value and B into C
 	 */
 	public class ADD1 implements RTN {
 		public String toString() {
-			return "ADD";
+			return "ADD1";
 		}
 		
 		public void execute() {
@@ -391,10 +387,11 @@ public class Controller {
 				data_path.bank.store(data_path.IR.decimal(7, 4));
 				
 				data_path.alu.set_operation(ALU.Operation.ADD);
+				data_path.alu.set_isSettingFlags(false);
 				
 				data_path.C.load();
 			} catch (Exception e) {
-				System.err.println("In Controller:ADD:execute");
+				System.err.println("In Controller:ADD1:execute");
 				e.printStackTrace();
 			}
 		}
@@ -405,16 +402,16 @@ public class Controller {
 	}
 	
 	/*
-	 * eline: Added SUB class
+	 * eline: Added SUB1 class
 	 */
 	/**
-	 * Sub (3)
+	 * SUB1
 	 * 
 	 * Add together left hand value and B into C
 	 */
 	public class SUB1 implements RTN {
 		public String toString() {
-			return "SUB";
+			return "SUB1";
 		}
 		
 		public void execute() {
@@ -422,10 +419,75 @@ public class Controller {
 				data_path.bank.store(data_path.IR.decimal(7, 4));
 				
 				data_path.alu.set_operation(ALU.Operation.SUBTRACT);
+				data_path.alu.set_isSettingFlags(false);
 				
 				data_path.C.load();
 			} catch (Exception e) {
-				System.err.println("In Controller:SUB:execute");
+				System.err.println("In Controller:SUB1:execute");
+				e.printStackTrace();
+			}
+		}
+		
+		public int advance() {
+			return NEXT;
+		}
+	}
+	
+	/*
+	 * eline: Added ADDS1 class
+	 */
+	/**
+	 * ADDS1
+	 * 
+	 * Add together left hand value and B into C (setting flags)
+	 */
+	public class ADDS1 implements RTN {
+		public String toString() {
+			return "ADDS1";
+		}
+		
+		public void execute() {
+			try {
+				data_path.bank.store(data_path.IR.decimal(7, 4));
+				
+				data_path.alu.set_operation(ALU.Operation.ADD);
+				data_path.alu.set_isSettingFlags(true);
+				
+				data_path.C.load();
+			} catch (Exception e) {
+				System.err.println("In Controller:ADDS1:execute");
+				e.printStackTrace();
+			}
+		}
+		
+		public int advance() {
+			return NEXT;
+		}
+	}
+	
+	/*
+	 * eline: Added SUBS1 class
+	 */
+	/**
+	 * SUBS1
+	 * 
+	 * Add together left hand value and B into C (setting flags)
+	 */
+	public class SUBS1 implements RTN {
+		public String toString() {
+			return "SUBS1";
+		}
+		
+		public void execute() {
+			try {
+				data_path.bank.store(data_path.IR.decimal(7, 4));
+				
+				data_path.alu.set_operation(ALU.Operation.SUBTRACT);
+				data_path.alu.set_isSettingFlags(true);
+				
+				data_path.C.load();
+			} catch (Exception e) {
+				System.err.println("In Controller:SUBS1:execute");
 				e.printStackTrace();
 			}
 		}
