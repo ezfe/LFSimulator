@@ -12,8 +12,6 @@ public class ALU extends BitRepresenting {
 	
 //	private int control[]
 	
-	private int wordsize;
-	
 	private BitRepresenting source_a;
 	private BitRepresenting source_b;
 

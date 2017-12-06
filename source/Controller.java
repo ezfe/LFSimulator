@@ -6,7 +6,7 @@ public class Controller {
 	/* Object data fields */
 	int memory_size;
 	private final int INSTRUCTION_SPACE = 5;
-	RTN control_memory[];
+	RTN[] control_memory;
 	CPU data_path;
 
 	int current_entry;
@@ -88,11 +88,15 @@ public class Controller {
 		
 		control_memory[instructionStart(1)] = new LOADI0();
 
-		control_memory[instructionStart(2) + 0] = new ADD0();
-		control_memory[instructionStart(2) + 1] = new ADD1();
-		control_memory[instructionStart(2) + 2] = new ADD2();
+		control_memory[instructionStart(2) + 0] = new ARITH_LOAD_B();
+		control_memory[instructionStart(2) + 1] = new ADD();
+		control_memory[instructionStart(2) + 2] = new ARITH_MOV_C();
 		
-		control_memory[instructionStart(3)] = new BRANCH();
+		control_memory[instructionStart(3) + 0] = new ARITH_LOAD_B();
+		control_memory[instructionStart(3) + 1] = new SUB();
+		control_memory[instructionStart(3) + 2] = new ARITH_MOV_C();
+		
+//		control_memory[instructionStart(3)] = new BRANCH();
 	}
 	
 	/*
@@ -102,18 +106,12 @@ public class Controller {
 		return (opcode + 1) * INSTRUCTION_SPACE;
 	}
 
-	public class RTN {
-		public String toString() {
-			return new String("RTN parent toString method.");
-		}
+	public interface RTN {
+		public String toString();
 
-		public void execute() {
-			System.err.println("You are executing the RTN parent.");
-		}
+		public void execute();
 
-		public int advance() {
-			return UNKNOWN;
-		}
+		public int advance();
 	};
 
 	/**
@@ -121,7 +119,7 @@ public class Controller {
 	 * 
 	 * Store the program counter in the memory address register
 	 */
-	public class Fetch0 extends RTN {
+	public class Fetch0 implements RTN {
 
 		public String toString() {
 			return new String("Fetch0");
@@ -148,7 +146,7 @@ public class Controller {
 	 * 
 	 * Increments the program counter and loads (previous pc) to memory data register 
 	 */
-	public class Fetch1 extends RTN {
+	public class Fetch1 implements RTN {
 		public String toString() {
 			return new String("Fetch1");
 		}
@@ -168,7 +166,7 @@ public class Controller {
 	 * 
 	 * Moves the data from the memory data register to the instruction register
 	 */
-	public class Fetch2 extends RTN {
+	public class Fetch2 implements RTN {
 
 		public String toString() {
 			return new String("Fetch2");
@@ -196,7 +194,7 @@ public class Controller {
 	 * Should always be in location 1 of the
 	 * control memory.
 	 */
-	public class NOP extends RTN {		
+	public class NOP implements RTN {		
 		public String toString() {
 			return new String("NOP");
 		}
@@ -215,7 +213,7 @@ public class Controller {
 	 * Will store the immediate value in 
 	 * the destination register.
 	 */
-	public class LOADI0 extends RTN {
+	public class LOADI0 implements RTN {
 
 		public String toString() {
 			return new String("LOADI0");
@@ -246,16 +244,16 @@ public class Controller {
 	}
 	
 	/*
-	 * eline: Added ADD0 class
+	 * eline: Added ARITH_LOAD_B class
 	 */
 	/**
-	 * Add 0 (2)
+	 * ARITH_LOAD_B
 	 * 
 	 * Move the right hand value into B
 	 */
-	public class ADD0 extends RTN {
+	public class ARITH_LOAD_B implements RTN {
 		public String toString() {
-			return "ADD0";
+			return "ARITH_LOAD_B";
 		}
 		
 		public void execute() {
@@ -263,7 +261,7 @@ public class Controller {
 				data_path.bank.store(data_path.IR.decimal(3, 0));
 				data_path.B.load();
 			} catch (Exception e) {
-				System.err.println("In Controller:ADD0:execute");
+				System.err.println("In Controller:ARITH_LOAD_B:execute");
 				System.err.println(e);
 			}
 		}
@@ -274,47 +272,16 @@ public class Controller {
 	}
 	
 	/*
-	 * eline: Added ADD1 class
+	 * eline: Added ARITH_MOV_C class
 	 */
 	/**
-	 * Add 1 (2)
-	 * 
-	 * Add together left hand value and B into C
-	 */
-	public class ADD1 extends RTN {
-		public String toString() {
-			return "ADD1";
-		}
-		
-		public void execute() {
-			try {
-				data_path.bank.store(data_path.IR.decimal(7, 4));
-				
-				data_path.alu.set_operation(ALU.Operation.ADD);
-				
-				data_path.C.load();
-			} catch (Exception e) {
-				System.err.println("In Controller:ADD1:execute");
-				System.err.println(e);
-			}
-		}
-		
-		public int advance() {
-			return NEXT;
-		}
-	}
-	
-	/*
-	 * eline: Added ADD2 class
-	 */
-	/**
-	 * Add 2 (2)
+	 * ARITH_MOV_C
 	 * 
 	 * Move C into destination register
 	 */
-	public class ADD2 extends RTN {
+	public class ARITH_MOV_C implements RTN {
 		public String toString() {
-			return "ADD2";
+			return "ARITH_MOV_C";
 		}
 		
 		public void execute() {
@@ -322,7 +289,7 @@ public class Controller {
 				data_path.C.store();
 				data_path.bank.load(data_path.IR.decimal(11, 8));
 			} catch (Exception e) {
-				System.err.println("In Controller:ADD2:execute");
+				System.err.println("In Controller:ARITH_MOV_C:execute");
 				System.err.println(e);
 			}
 		}
@@ -333,16 +300,78 @@ public class Controller {
 	}
 	
 	/*
+	 * eline: Added ADD class
+	 */
+	/**
+	 * Add (2)
+	 * 
+	 * Add together left hand value and B into C
+	 */
+	public class ADD implements RTN {
+		public String toString() {
+			return "ADD";
+		}
+		
+		public void execute() {
+			try {
+				data_path.bank.store(data_path.IR.decimal(7, 4));
+				
+				data_path.alu.set_operation(ALU.Operation.ADD);
+				
+				data_path.C.load();
+			} catch (Exception e) {
+				System.err.println("In Controller:ADD:execute");
+				e.printStackTrace();
+			}
+		}
+		
+		public int advance() {
+			return NEXT;
+		}
+	}
+	
+	/*
+	 * eline: Added SUB class
+	 */
+	/**
+	 * Sub (3)
+	 * 
+	 * Add together left hand value and B into C
+	 */
+	public class SUB implements RTN {
+		public String toString() {
+			return "SUB";
+		}
+		
+		public void execute() {
+			try {
+				data_path.bank.store(data_path.IR.decimal(7, 4));
+				
+				data_path.alu.set_operation(ALU.Operation.SUBTRACT);
+				
+				data_path.C.load();
+			} catch (Exception e) {
+				System.err.println("In Controller:SUB:execute");
+				e.printStackTrace();
+			}
+		}
+		
+		public int advance() {
+			return NEXT;
+		}
+	}
+	
+	/*
 	 * eline: Added BRANCH class
 	 */
 	/**
-	 * Branch (3)
+	 * Branch (4?)
 	 * 
 	 * Changes the program counter appropriately
 	 */
-	public class BRANCH extends RTN {
+	public class BRANCH implements RTN {
 		public String toString() {
-			return "B";
+			return "BRANCH";
 		}
 		
 		public void execute() {
@@ -356,6 +385,12 @@ public class Controller {
 				System.err.println("In Controller:BRANCH:execute");
 				e.printStackTrace();
 			}
+		}
+
+		@Override
+		public int advance() {
+			// TODO Auto-generated method stub
+			return START;
 		}
 	}
 
