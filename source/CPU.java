@@ -26,14 +26,15 @@ public class CPU extends JPanel implements ActionListener {
 	 */
 	public Register IR;
 	/**
-	 * The memory address register contains the address to access in or store to memory
+	 * The memory address register contains the address to access in or store to
+	 * memory
 	 */
 	public Register MA;
 	/**
 	 * The memory data register contains the data accessed or to be stored in memory
 	 */
 	public Register MD;
-	
+
 	/**
 	 * The b-register holds temporary data for the ALU
 	 */
@@ -42,12 +43,12 @@ public class CPU extends JPanel implements ActionListener {
 	 * The c-register holds result data from the ALU
 	 */
 	public Register C;
-	
+
 	/**
 	 * Register Bank
 	 */
 	public RegisterBank bank;
-	
+
 	/**
 	 * Master Bus
 	 */
@@ -57,7 +58,7 @@ public class CPU extends JPanel implements ActionListener {
 	 * The Arithmetic Logical Unit
 	 */
 	public ALU alu;
-	
+
 	private int clock_ticks;
 	private int general_purpose_reg_cnt;
 	private int wordsize;
@@ -111,7 +112,7 @@ public class CPU extends JPanel implements ActionListener {
 
 		B = new Register(wordsize);
 		C = new Register(wordsize);
-		
+
 		bank = new RegisterBank(wordsize, general_purpose_reg_cnt);
 
 		bank.set_source_bus(master_bus);
@@ -132,13 +133,13 @@ public class CPU extends JPanel implements ActionListener {
 		alu = new ALU(wordsize);
 		alu.set_source_a(master_bus);
 		alu.set_source_b(B);
-		
+
 		B.set_source(master_bus);
 		B.set_destination(null);
-		
+
 		C.set_source(alu);
 		C.set_destination(master_bus);
-		
+
 		reset(); // clear everything to zero
 		refresh_display(); // redraw the display
 	}
@@ -180,7 +181,7 @@ public class CPU extends JPanel implements ActionListener {
 		main_memory.refresh_display();
 	}
 
-	/***
+	/**
 	 * Clears all the registers.
 	 */
 	public void reset() {
@@ -215,36 +216,51 @@ public class CPU extends JPanel implements ActionListener {
 	}
 
 	public String build_display() {
-		int offset = 0;
-		String result = "";
+		/*
+		 * Switched from String to StringBuilder
+		 */
+		StringBuilder result = new StringBuilder();
 
-		result += "Wordsize   : " + wordsize;
-		result += "Reg Count  : " + general_purpose_reg_cnt + newline;
-		result += "Clock Ticks: " + clock_ticks + newline;
-		result += "Curr RTN   : " + controler.current_rtn() + newline;
+		result.append("Wordsize   : " + wordsize + newline);
+		result.append("Reg Count  : " + general_purpose_reg_cnt + newline);
+		result.append("Clock Ticks: " + clock_ticks + newline);
+		result.append("Curr RTN   : " + controler.current_rtn() + newline);
 
-		result += newline;
-		result += "Bus: " + master_bus.binary() + newline;
+		result.append(newline);
+		result.append("Bus: " + master_bus.binary() + newline);
 
-		result += newline;
-		result += "IR : " + IR.binary() + newline;
-		result += "PC : " + PC.binary() + newline;
-		result += newline;
-		result += "MA : " + MA.binary() + newline;
-		result += "MD : " + MD.binary() + newline;
-		result += newline;
+		result.append(newline);
+		result.append("IR : " + IR.binary() + newline);
+		result.append("PC : " + PC.binary() + newline);
+		result.append(newline);
+		result.append("MA : " + MA.binary() + newline);
+		result.append("MD : " + MD.binary() + newline);
+		result.append(newline);
+		
+		/*
+		 * eline: Added B, C, and ALU to CPU descriptions
+		 */
+		result.append("B  : " + B.binary() + newline);
+		result.append("C  : " + B.binary() + newline);
+		result.append(newline);
+		result.append("ALU: " + alu.binary() + newline);
+		result.append("op : " + alu.get_operation().name() + newline);
+		result.append(newline);
 
-		result += newline + "----- Register Bank -----" + newline;
+		result.append(newline + "----- Register Bank -----" + newline);
 		try {
-			for (int cnt = 0; cnt < 8; cnt++) {
-				result += String.format("%02d: %s", cnt, bank.binary(cnt)) + newline;
+			/*
+			 * eline: Changed to properly cover all registers
+			 */
+			for (int cnt = 0; cnt < general_purpose_reg_cnt; cnt++) {
+				result.append(String.format("%02d: %s", cnt, bank.binary(cnt)) + newline);
 			}
 		} catch (Exception e) {
 			System.err.println("In CPU:build_display");
 			System.err.println(e);
 		}
 
-		return result;
+		return result.toString();
 	}
 
 }

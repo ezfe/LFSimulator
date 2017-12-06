@@ -17,7 +17,10 @@ public class Simulation {
     });
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-            CPU.createAndShowGUI(16, 8, mem);
+        		/*
+        		 * eline: Changed to 32 bit registers, 32 general purpose registers
+        		 */
+            CPU.createAndShowGUI(32, 32, mem);
         }
     });
   }

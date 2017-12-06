@@ -49,6 +49,14 @@ public class ALU extends BitRepresenting {
 		this.operation = operation;
 	}
 	
+	/**
+	 * Get the ALU operation
+	 * @return The operation
+	 */
+	public Operation get_operation() {
+		return this.operation;
+	}
+	
 	@Override
 	public int[] getBits() {
 		int[] a = source_a.getBits();
