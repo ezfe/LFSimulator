@@ -16,6 +16,12 @@ public class ALU extends BitRepresenting {
 	private BitRepresenting source_b;
 
 	private Operation operation = Operation.ADD;
+	private boolean isSettingFlags = false;
+	
+	public BitContainer negativeFlag;
+	public BitContainer zeroFlag;
+	public BitContainer carryFlag;
+	public BitContainer overflowFlag;
 	
 	/**
 	 * Create an ALU
@@ -23,6 +29,11 @@ public class ALU extends BitRepresenting {
 	 */
 	public ALU(int wordsize) {
 		super(wordsize);
+		
+		this.negativeFlag = new Register(1);
+		this.zeroFlag = new Register(1);
+		this.carryFlag = new Register(1);
+		this.overflowFlag = new Register(1);
 	}
 	
 	/**
@@ -42,6 +53,14 @@ public class ALU extends BitRepresenting {
 	}
 	
 	/**
+	 * Get the ALU operation
+	 * @return The operation
+	 */
+	public Operation get_operation() {
+		return this.operation;
+	}
+	
+	/**
 	 * Set the ALU operation
 	 * @param operation The operation
 	 */
@@ -50,11 +69,19 @@ public class ALU extends BitRepresenting {
 	}
 	
 	/**
-	 * Get the ALU operation
-	 * @return The operation
+	 * Get whether the ALU is setting flags
+	 * @return  Whether the ALU is setting flags
 	 */
-	public Operation get_operation() {
-		return this.operation;
+	public boolean get_isSettingFlags() {
+		return this.isSettingFlags;
+	}
+	
+	/**
+	 * Set whether the ALU is setting flags
+	 * @param isf Whether the ALU should set flags
+	 */
+	public void set_isSettingFlags(boolean isf) {
+		this.isSettingFlags = isf;
 	}
 	
 	@Override

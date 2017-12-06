@@ -4,7 +4,7 @@
 public class Simulation {
 
   /* Object data fields */
-  public static RAM    mem;
+  public static RAM mem;
 
   public static void main(String[] args) {
     
