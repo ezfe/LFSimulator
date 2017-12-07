@@ -12,7 +12,7 @@ public class Simulation {
     //creating and showing this application's GUI.
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-            mem = RAM.createAndShowGUI(32, 0x2);
+            mem = RAM.createAndShowGUI(32, 32);
         }
     });
     javax.swing.SwingUtilities.invokeLater(new Runnable() {

@@ -1,9 +1,9 @@
 
 public abstract class BitRepresenting {
-	protected final int wordsize;
+	public final int bitcount;
 
-	public BitRepresenting(int wordsize) {
-		this.wordsize = wordsize;
+	public BitRepresenting(int bitcount) {
+		this.bitcount = bitcount;
 	}
 	
 	/**

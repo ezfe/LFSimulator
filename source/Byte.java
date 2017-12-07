@@ -37,13 +37,13 @@ public class Byte extends BitContainer {
 			a.store(5);
 			System.out.println(a.binary(2, 0));
 
-			a.storeHex("AB");
+			a.store("AB", 16);
 			System.out.println(a.binary());
 
-			a.storeHex("D9");
+			a.store("D9", 16);
 			System.out.println(a.binary());
 
-			a.storeHex("00");
+			a.store("00", 16);
 			System.out.println(a.hex());
 			System.out.println(a.binary());
 

@@ -126,7 +126,7 @@ public class ALU extends BitRepresenting {
 	 * @return The result
 	 */
 	private int[] add(int[] a, int[] b, int carry) {
-		int[] res = new int[wordsize];
+		int[] res = new int[bitcount];
 		for (int index = 0; index < res.length; index++) {
 			res[index] = a[index] + b[index] + carry;
 			

@@ -32,7 +32,7 @@ public abstract class BitContainer extends BitRepresenting {
 		for (int cnt = 0; cnt < times; cnt++) {
 			int carry = 1;
 
-			for (int inner_cnt = 0; inner_cnt < wordsize; inner_cnt++) {
+			for (int inner_cnt = 0; inner_cnt < bitcount; inner_cnt++) {
 				bits[inner_cnt] += carry;
 
 				if (bits[inner_cnt] > 1) {
@@ -49,7 +49,7 @@ public abstract class BitContainer extends BitRepresenting {
 	 * Negate the register (takes the ones-complement and increments)
 	 */
 	public void negate() {
-		for (int cnt = 0; cnt < wordsize; cnt++) {
+		for (int cnt = 0; cnt < bitcount; cnt++) {
 			if (bits[cnt] == 1) {
 				bits[cnt] = 0;
 			} else {
@@ -66,8 +66,8 @@ public abstract class BitContainer extends BitRepresenting {
 	 */
 	@Override
 	public int[] getBits() {
-		int[] bits = new int[wordsize];
-		for (int index = 0; index < wordsize; index++) {
+		int[] bits = new int[bitcount];
+		for (int index = 0; index < bitcount; index++) {
 			bits[index] = this.bits[index];
 		}
 		return bits;
@@ -80,8 +80,8 @@ public abstract class BitContainer extends BitRepresenting {
 	 */
 	public void store(int value) throws Exception {
 		// System.err.println("--" + value + "--");
-		if (value < 0 || value >= Math.pow(2, wordsize)) {
-			throw new Exception("Passed value is too large for Byte (Should be 0 ≤ " + value + " < " + Math.pow(2, wordsize) + ")");
+		if (value < 0 || value >= Math.pow(2, bitcount)) {
+			throw new Exception("Passed value is too large for Byte (Should be 0 ≤ " + value + " < " + Math.pow(2, bitcount) + ")");
 		}
 
 		for (int index = 0; index < bits.length; index++) {
@@ -90,18 +90,17 @@ public abstract class BitContainer extends BitRepresenting {
 		}
 	}
 	
+	/*
+	 * eline: Generalized for all bases
+	 */
 	/**
-	 * Update with a hex value
-	 * @param value
+	 * Update with a String value
+	 * @param value The value
+	 * @param base The base
 	 * @throws Exception
 	 */
-	public void storeHex(String value) throws Exception {
-		// System.err.println("--" + value + "--");
-//		if (value.length() != 2) {
-//			throw new Exception("Passed value is not the right length for Byte");
-//		}
-
-		int int_value = Integer.parseInt(value, 16);
+	public void store(String value, int base) throws Exception {
+		int int_value = Integer.parseInt(value, base);
 
 		/*
 		 * eline: changed to call existing function

@@ -54,7 +54,7 @@ public class Register extends BitContainer {
 	 */
 	public void load() {
 		int[] srcBits = source.getBits();
-		for (int cnt = 0; cnt < wordsize; cnt++) {
+		for (int cnt = 0; cnt < bitcount; cnt++) {
 			bits[cnt] = srcBits[cnt];
 		}
 	}
@@ -67,7 +67,7 @@ public class Register extends BitContainer {
 			throw new Exception("There is no destination object");
 		}
 		
-		for (int cnt = 0; cnt < wordsize; cnt++) {
+		for (int cnt = 0; cnt < bitcount; cnt++) {
 			destination.bits[cnt] = bits[cnt];
 		}
 	}

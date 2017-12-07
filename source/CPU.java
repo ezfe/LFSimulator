@@ -215,6 +215,17 @@ public class CPU extends JPanel implements ActionListener {
 		textArea.setText(build_display()); // stores memory as a string to widget
 	}
 
+	/*
+	 * eline: Added function getWordSize
+	 */
+	/**
+	 * Get the CPU wordsize
+	 * @return The CPU wordsize
+	 */
+	public int getWordSize() {
+		return this.wordsize;
+	}
+	
 	public String build_display() {
 		/*
 		 * Switched from String to StringBuilder

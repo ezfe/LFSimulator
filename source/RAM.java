@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Scanner;
 import javax.swing.*;
 import java.awt.*;
@@ -19,15 +20,25 @@ public class RAM extends JPanel implements ActionListener {
 	private final static String newline = "\n";
 
 	private Byte memory[];
-	private int size;
+	private int wordsize;
 	private int byte_width;
 	private int last_access;
 
 	private Register address_register;
 	private Register data_register;
 
-	/* Primary constructor */
-	public RAM(int sizeValue, int byteWidth) {
+	/*
+	 * eline: Changed parameters of RAM constructor
+	 */
+	/**
+	 * Create a RAM object
+	 * 
+	 * @param numberOfBytes
+	 *            The number of bytes the RAM holds
+	 * @param wordsize
+	 *            The machine wordsize
+	 */
+	public RAM(int numberOfBytes, int wordsize) {
 
 		super(new GridBagLayout());
 
@@ -51,20 +62,23 @@ public class RAM extends JPanel implements ActionListener {
 		c.weighty = 1.0;
 		add(scrollPane, c);
 
-		size = sizeValue; // store memory organization
-		byte_width = byteWidth;
+		this.wordsize = wordsize; // store memory organization
+		byte_width = 2;
 		last_access = 0;
 
-		memory = new Byte[size]; // construct memory
+		memory = new Byte[numberOfBytes]; // construct memory
 
-		for (int cnt = 0; cnt < size; cnt++) {
-			memory[cnt] = new Byte();
+		for (int index = 0; index < memory.length; index++) {
+			memory[index] = new Byte();
 		}
 
 		/*
 		 * eline: Changed from test_file.as to full path
 		 */
-		load_memory("/Users/ezekielelin/Library/Mobile Documents/com~apple~CloudDocs/Developer/Lafayette/CS 203/Project 3/test_file.o"); // load memory file
+		load_memory(
+				"/Users/ezekielelin/Library/Mobile Documents/com~apple~CloudDocs/Developer/Lafayette/CS 203/Project 3/test_file.o"); // load
+																																		// memory
+																																		// file
 		refresh_display(); // redraw the display
 	}
 
@@ -80,13 +94,13 @@ public class RAM extends JPanel implements ActionListener {
 	 * Create the GUI and show it. For thread safety, this method should be invoked
 	 * from the event dispatch thread.
 	 */
-	public static RAM createAndShowGUI(int sizeValue, int byteWidth) {
+	public static RAM createAndShowGUI(int numberOfBytes, int wordsize) {
 		// Create and set up the window.
 		JFrame frame = new JFrame("RAM");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// Add contents to the window.
-		RAM mem = new RAM(sizeValue, byteWidth);
+		RAM mem = new RAM(numberOfBytes, wordsize);
 		frame.add(mem);
 
 		// Display the window.
@@ -97,9 +111,12 @@ public class RAM extends JPanel implements ActionListener {
 	}
 
 	public void load_memory(String file_name) {
-
 		Scanner sc = null; // initialize and create scanner mechanism
 		String curr_line;
+
+		final int bytesPerWord = wordsize / 8;
+		int charsPerByte = 2;
+		int base = 16;
 
 		try {
 			sc = new Scanner(new File(file_name));
@@ -109,20 +126,44 @@ public class RAM extends JPanel implements ActionListener {
 		}
 
 		try { // load file into memory
-			int line_cnt = 0;
+			int line_cnt = -1;
 
 			while (sc.hasNextLine()) {
 				curr_line = sc.nextLine(); // get next line
-				// System.out.println(">>>>" + curr_line + "<<<<");
+
+				/*
+				 * eline: Allow base to be configured by setting first line of input file to `base:##`
+				 */
+				if (line_cnt == -1) {
+					line_cnt++;
+					
+					if (curr_line.toLowerCase().equals("binary")) {
+						System.out.println("Parsing memory file as base 2");
+						base = 2;
+						charsPerByte = 8;
+						
+						continue;
+					} else if (curr_line.toLowerCase().equals("hexadecimal")) {
+						System.out.println("Parsing memory file as base 16");
+						base = 16;
+						charsPerByte = 2;
+						
+						continue;
+					} else {
+						System.out.println("No base specified. Using base " + base + ", treating first line as memory data");
+					}
+				}
 
 				if (curr_line.length() == 0) {
 					continue; // skip blank lines
 				}
 
-				for (int cnt = 0; cnt <= byte_width; cnt += 2) {
-					memory[(line_cnt * byte_width) + (cnt / 2)]
-							.storeHex(String.format("%c%c", curr_line.charAt(cnt), curr_line.charAt(cnt + 1)));
-
+				for (int cnt = 0; cnt < (bytesPerWord * charsPerByte); cnt += charsPerByte) {
+					String substring = curr_line.substring(cnt, cnt + charsPerByte);
+					/*
+					 * eline: Improved logic for filling memory
+					 */
+					memory[(line_cnt * bytesPerWord) + (cnt / charsPerByte)].store(substring, base);
 				}
 
 				line_cnt++;
@@ -140,40 +181,82 @@ public class RAM extends JPanel implements ActionListener {
 	}
 
 	public String build_display() {
+		
 		int offset = 0;
-		String result = "    Address  Hex Display   Binary Display" + newline;
+		final int bytesPerWord = (wordsize / 8);
+		
+		final int hexRequiredSpaces = Math.max(11, bytesPerWord * 2);
+		
+		StringBuilder result = new StringBuilder();
+		
+		/*
+		 * HEADERS
+		 */
+		
+		/* Arrow Header */
+		result.append("    ");
+		
+		/* Address Header */
+		result.append("Address  ");
+		
+		/* Hex Header */
+		result.append("Hex Display");
+		for(int i = 11; i < hexRequiredSpaces + 2; i++) {
+			result.append(' ');
+		}
+		
+		/* Binary Header */
+		result.append("Binary Display" + newline);
 
-		result += "    -------  ------------  --------------" + newline;
-
-		for (int cnt = 0; cnt < size; cnt += byte_width) {
-			if (cnt == last_access) { // add pointer code here
-				result += "==> ";
+		/*
+		 * SUB-HEADERS
+		 */
+		
+		/* Arrow Subheader */
+		result.append("    ");
+		
+		/* Address Subheader */
+		result.append("-------  ");
+		
+		/* Hex Subheader */
+		for(int i = 0; i < hexRequiredSpaces; i++) {
+			result.append('-');
+		}
+		result.append("  ");
+		
+		/* Binary Subheader */
+		result.append("--------------" + newline);
+		
+		/*
+		 * ROWS
+		 */
+		
+		for (int cnt = 0; cnt < memory.length; cnt += bytesPerWord) {
+			/* Arrow to last accessed memory */
+			if (cnt == last_access) {
+				result.append("==> ");
 			} else {
-				result += "    ";
+				result.append("    ");
 			}
 
-			result += String.format("0x%05X  ", cnt); // display address column
+			/* Hex Address */
+			result.append(String.format("0x%05X  ", cnt));
 
-			offset = 12 - (byte_width * 2); // compute offset between hex and bin
-
-			for (int cnt2 = 0; cnt2 < byte_width; cnt2++) { // display hex value
-				result += memory[cnt + cnt2].hex();
+			for (int cnt2 = 0; cnt2 < (wordsize / 8); cnt2++) { // display hex value
+				result.append(memory[cnt + cnt2].hex());
+			}
+			for(int i = bytesPerWord * 2; i < hexRequiredSpaces + 2; i++) {
+				result.append(' ');
 			}
 
-			for (int cnt2 = 0; cnt2 < offset; cnt2++) { // add offset
-				result += " ";
+			for (int cnt2 = 0; cnt2 < (wordsize / 8); cnt2++) { // display binary value
+				result.append(memory[cnt + cnt2].binary() + " ");
 			}
 
-			result += "  ";
-
-			for (int cnt2 = 0; cnt2 < byte_width; cnt2++) { // display binary value
-				result += memory[cnt + cnt2].binary() + " ";
-			}
-
-			result += newline;
+			result.append(newline);
 		}
 
-		return result;
+		return result.toString();
 	}
 
 	public String getMemoryWord_binary(int address) {
@@ -182,7 +265,7 @@ public class RAM extends JPanel implements ActionListener {
 
 		last_access = address;
 
-		for (int cnt = 0; cnt < byte_width; cnt++) {
+		for (int cnt = 0; cnt < wordsize / 8; cnt++) {
 			result += memory[address + cnt].binary();
 		}
 
@@ -195,20 +278,22 @@ public class RAM extends JPanel implements ActionListener {
 
 		last_access = address;
 
-		for (int cnt = 0; cnt < byte_width; cnt++) {
+		for (int cnt = 0; cnt < wordsize / 8; cnt++) {
 			result += memory[address + cnt].hex();
 		}
 
 		return result;
 	}
 
+	/*
+	 * Set the word at an address with a hex value
+	 */
 	public void setMemoryWord(int address, String value) {
-
 		last_access = address;
 
 		try {
-			for (int cnt = 0; cnt < byte_width; cnt++) {
-				memory[address + cnt].storeHex(value.substring((cnt * 2), (cnt * 2) + 1));
+			for (int cnt = 0; cnt < wordsize / 8; cnt++) {
+				memory[address + cnt].store(value.substring((cnt * 2), (cnt * 2) + 1), 16);
 			}
 		} catch (Exception e) {
 			System.err.println("In RAM:setMemoryWord.");
@@ -231,7 +316,7 @@ public class RAM extends JPanel implements ActionListener {
 		// System.err.println(address);
 		// System.err.println(getMemoryWord(address));
 		try {
-			data_register.storeHex(getMemoryWord_hex(address));
+			data_register.store(getMemoryWord_hex(address), 16);
 		} catch (Exception e) {
 			System.err.println("An error occurred in RAM:memory_load");
 			e.printStackTrace();

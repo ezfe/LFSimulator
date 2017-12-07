@@ -95,7 +95,7 @@ public class RegisterBank {
 			throw new Exception("RegisterBank store(str) register_id out of range.");
 		}
 
-		registers[register_id].storeHex(value);
+		registers[register_id].store(value, 16);
 	}
 
 	public static void main(String args[]) {

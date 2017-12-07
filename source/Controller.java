@@ -56,7 +56,7 @@ public class Controller {
 
 		case CMDNAME: {
 			try {
-				current_entry = (data_path.IR.decimal(15, 12) + 1) * INSTRUCTION_SPACE;
+				current_entry = instructionStart(data_path.IR.decimal(31, 25), 0);
 				System.err.println("--------");
 				System.err.println(data_path.IR.binary());
 				System.err.println(current_entry);
@@ -221,7 +221,7 @@ public class Controller {
 		}
 
 		public void execute() {
-			data_path.PC.increment(2);
+			data_path.PC.increment(4);
 			data_path.main_memory.memory_load();
 		}
 
