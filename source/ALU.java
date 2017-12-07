@@ -7,7 +7,7 @@
 public class ALU extends BitRepresenting {
 	
 	public enum Operation {
-		ADD, SUBTRACT, AND, OR
+		ADD, SUBTRACT, AND, OR, XOR
 	}
 	
 //	private int control[]
