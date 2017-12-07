@@ -152,14 +152,14 @@ public class Controller {
 		
 		control_memory[instructionStart(15, 0)] = new LOAD_B_IMM();
 		control_memory[instructionStart(15, 1)] = new ADD_LHS_B();
-//		control_memory[instructionStart(15, 2)] = new LDUR2();
-//		control_memory[instructionStart(15, 3)] = new LDUR3();
-//		control_memory[instructionStart(15, 4)] = new LDUR4();
+		control_memory[instructionStart(15, 2)] = new LDUR2();
+		control_memory[instructionStart(15, 3)] = new LDUR3();
+		control_memory[instructionStart(15, 4)] = new LDUR4();
 		
 		control_memory[instructionStart(16, 0)] = new LOAD_B_IMM();
 		control_memory[instructionStart(16, 1)] = new ADD_LHS_B();
-//		control_memory[instructionStart(16, 2)] = new STUR2();
-//		control_memory[instructionStart(16, 3)] = new STUR3();
+		control_memory[instructionStart(16, 2)] = new STUR2();
+		control_memory[instructionStart(16, 3)] = new STUR3();
 
 		
 		//		control_memory[instructionStart(3)] = new BRANCH();
@@ -370,7 +370,7 @@ public class Controller {
 	/**
 	 * ADD_LHS_B
 	 * 
-	 * Add together left hand value and B into C
+	 * Add together left hand register value and B into C
 	 */
 	public class ADD_LHS_B implements RTN {
 		public String toString() {
@@ -402,7 +402,7 @@ public class Controller {
 	/**
 	 * SUB_LHS_B
 	 * 
-	 * Add together left hand value and B into C
+	 * Add together left hand register value and B into C
 	 */
 	public class SUB_LHS_B implements RTN {
 		public String toString() {
@@ -434,7 +434,7 @@ public class Controller {
 	/**
 	 * ADDS_LHS_B
 	 * 
-	 * Add together left hand value and B into C (setting flags)
+	 * Add together left hand register value and B into C (setting flags)
 	 */
 	public class ADDS_LHS_B implements RTN {
 		public String toString() {
@@ -466,7 +466,7 @@ public class Controller {
 	/**
 	 * SUBS_LHS_B
 	 * 
-	 * Add together left hand value and B into C (setting flags)
+	 * Add together left hand register value and B into C (setting flags)
 	 */
 	public class SUBS_LHS_B implements RTN {
 		public String toString() {
@@ -498,7 +498,7 @@ public class Controller {
 	/**
 	 * AND_LHS_B
 	 * 
-	 * Logical AND together left hand value and B into C
+	 * Logical AND together left hand register value and B into C
 	 */
 	public class AND_LHS_B implements RTN {
 		public String toString() {
@@ -530,7 +530,7 @@ public class Controller {
 	/**
 	 * ORR_LHS_B
 	 * 
-	 * Logical OR together left hand value and B into C
+	 * Logical OR together left hand register value and B into C
 	 */
 	public class ORR_LHS_B implements RTN {
 		public String toString() {
@@ -562,7 +562,7 @@ public class Controller {
 	/**
 	 * EOR_LHS_B
 	 * 
-	 * Logical OR together left hand value and B into C
+	 * Logical OR together left hand register value and B into C
 	 */
 	public class EOR_LHS_B implements RTN {
 		public String toString() {
@@ -596,7 +596,7 @@ public class Controller {
 	 * 
 	 * Load C into MA
 	 */
-	public class LUDR2 implements RTN {
+	public class LDUR2 implements RTN {
 		@Override
 		public String toString() {
 			return "LDUR2";
@@ -608,6 +608,128 @@ public class Controller {
 				data_path.MA.load();
 			} catch (Exception e) {
 				System.err.println("In Controller:LDUR2:execute");
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public int advance() {
+			return NEXT;
+		}
+	}
+	
+	/*
+	 * eline: Added LDUR3 class
+	 */
+	/**
+	 * LDUR3
+	 * 
+	 * Load main memory
+	 */
+	public class LDUR3 implements RTN {
+		@Override
+		public String toString() {
+			return "LDUR3";
+		}
+		@Override
+		public void execute() {
+			try {
+				data_path.main_memory.memory_load();
+			} catch (Exception e) {
+				System.err.println("In Controller:LDUR3:execute");
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public int advance() {
+			return NEXT;
+		}
+	}
+	
+	/*
+	 * eline: Added LDUR4 class
+	 */
+	/**
+	 * LDUR4
+	 * 
+	 * Store MD in destination register
+	 */
+	public class LDUR4 implements RTN {
+		@Override
+		public String toString() {
+			return "LDUR4";
+		}
+		@Override
+		public void execute() {
+			try {
+				data_path.MD.store();
+				data_path.bank.load(data_path.IR.decimal(24, 20));
+			} catch (Exception e) {
+				System.err.println("In Controller:LDUR4:execute");
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added STUR2 class
+	 */
+	/**
+	 * STUR2
+	 * 
+	 * Load C into MA
+	 * Load source register into MD
+	 */
+	public class STUR2 implements RTN {
+		@Override
+		public String toString() {
+			return "STUR2";
+		}
+		@Override
+		public void execute() {
+			try {
+				data_path.C.store();
+				data_path.MA.load();
+				
+				data_path.bank.store(data_path.IR.decimal(24, 20));
+				data_path.MD.load();
+			} catch (Exception e) {
+				System.err.println("In Controller:STUR2:execute");
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public int advance() {
+			return NEXT;
+		}
+	}
+	
+	/*
+	 * eline: Added STUR3 class
+	 */
+	/**
+	 * STUR3
+	 * 
+	 * Store main memory
+	 */
+	public class STUR3 implements RTN {
+		@Override
+		public String toString() {
+			return "STUR3";
+		}
+		@Override
+		public void execute() {
+			try {
+				data_path.main_memory.memory_store();
+			} catch (Exception e) {
+				System.err.println("In Controller:STUR3:execute");
 				e.printStackTrace();
 			}
 		}
