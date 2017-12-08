@@ -91,16 +91,24 @@ public class ALU extends BitRepresenting {
 		
 		switch (this.operation) {
 		case ADD: {
-			return this.add(a, b, 0);
+			return add(a, b, 0);
 		}
 		case SUBTRACT: {
-			return this.subtract(a, b);
+			return subtract(a, b);
+		}
+		case AND: {
+			return and(a, b);
+		}
+		case OR: {
+			return or(a, b);
+		}
+		case XOR: {
+			return xor(a, b);
+		}
 		}
 		
-		default: {
-			return a;
-		}
-		}
+		System.err.println("Escaped switch block in ALU getBits for operation " + this.operation.name());
+		return a;
 	}
 	
 	/**
@@ -114,8 +122,29 @@ public class ALU extends BitRepresenting {
 		for (int index = 0; index < b.length; index++) {
 			b_not[index] = (b[index] == 0) ? 1 : 0;
 		}
+		int[] res = add(a, b_not, 1);
 		
-		return add(a, b_not, 1);
+		if (this.isSettingFlags) {
+			try {
+				final int a_sign = a[a.length - 1];
+				final int b_sign = b[b.length - 1];
+				final int res_sign = res[res.length - 1];
+				
+				// Negative Flag is set in add()
+				// Zero Flag is set in add()
+				
+				// Store overflow if `-` - `+` = `+` OR `+` - `-` = `-`
+				boolean overflow = (a_sign != b_sign) && (b_sign == res_sign);
+				this.overflowFlag.store(overflow ? 1 : 0);
+				
+				// Carry Flag is set in add()
+			} catch (Exception e) {
+				System.err.println("Error occurred setting flags (ALU:sub)");
+				e.printStackTrace();
+			}
+		}
+		
+		return res;
 	}
 	
 	/**
@@ -126,7 +155,7 @@ public class ALU extends BitRepresenting {
 	 * @return The result
 	 */
 	private int[] add(int[] a, int[] b, int carry) {
-		int[] res = new int[bitcount];
+		int[] res = new int[a.length];
 		for (int index = 0; index < res.length; index++) {
 			res[index] = a[index] + b[index] + carry;
 			
@@ -141,7 +170,79 @@ public class ALU extends BitRepresenting {
 			}
 		}
 		
-		//TODO: Carry-out
+		if (this.isSettingFlags) {
+			try {
+				final int a_sign = a[a.length - 1];
+				final int b_sign = b[b.length - 1];
+				final int res_sign = res[res.length - 1];
+				
+				// Store the sign bit of the result in the negative flag
+				this.negativeFlag.store(res_sign);
+				
+				// Set the zero flag to TRUE
+				this.zeroFlag.store(1);
+				// Then check for non-zero bits, and set to FALSE
+				for (int i = 0; i < res.length; i++) {
+					if (res[i] != 0) {
+						this.zeroFlag.store(0);
+						break;
+					}
+				}
+				
+				// Store overflow if `+` - `+` = `-` OR `+` - `-` = `+`
+				boolean overflow = (a_sign == b_sign) && (b_sign != res_sign);
+				this.overflowFlag.store(overflow ? 1 : 0);
+				
+				// Store the last carry bit (the carry-out) in the carry flag
+				this.carryFlag.store(carry);
+			} catch (Exception e) {
+				System.err.println("Error occurred setting flags (ALU:add)");
+				e.printStackTrace();
+			}
+		}
+		
+		return res;
+	}
+	
+	/**
+	 * AND two numbers
+	 * @param a The first number
+	 * @param b The second number
+	 * @return The result
+	 */
+	private int[] and(int[] a, int[] b) {
+		int[] res = new int[a.length];
+		for(int index = 0; index < res.length; index++) {
+			res[index] = (a[index] + b[index] == 2) ? 1 : 0;
+		}
+		return res;
+	}
+	
+	/**
+	 * OR two numbers
+	 * @param a The first number
+	 * @param b The second number
+	 * @return The result
+	 */
+	private int[] or(int[] a, int[] b) {
+		int[] res = new int[a.length];
+		for(int index = 0; index < res.length; index++) {
+			res[index] = (a[index] + b[index] >= 1) ? 1 : 0;
+		}
+		return res;
+	}
+	
+	/**
+	 * XOR two numbers
+	 * @param a The first number
+	 * @param b The second number
+	 * @return The result
+	 */
+	private int[] xor(int[] a, int[] b) {
+		int[] res = new int[a.length];
+		for(int index = 0; index < res.length; index++) {
+			res[index] = (a[index] + b[index] == 1) ? 1 : 0;
+		}
 		return res;
 	}
 }

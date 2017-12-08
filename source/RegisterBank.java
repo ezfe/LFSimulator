@@ -81,6 +81,19 @@ public class RegisterBank {
 
 		return registers[register_id].hex();
 	}
+	
+	/**
+	 * Get decimal value of a register
+	 * @param register_id The register 
+	 * @return The decimal value
+	 */
+	public int decimal(int register_id) throws Exception {
+		if (register_id < 0 || register_cnt <= register_id) {
+			throw new Exception("RegisterBank binary register_id out of range.");
+		}
+		
+		return registers[register_id].decimal();
+	}
 
 	public void store(int value, int register_id) throws Exception {
 		if (register_id < 0 || register_cnt <= register_id) {
@@ -123,5 +136,4 @@ public class RegisterBank {
 			System.out.println(e);
 		}
 	}
-
 }

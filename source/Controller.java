@@ -161,8 +161,33 @@ public class Controller {
 		control_memory[instructionStart(16, 2)] = new STUR2();
 		control_memory[instructionStart(16, 3)] = new STUR3();
 
+		control_memory[instructionStart(17, 0)] = new LOAD_PC_REG_Z();
 		
-		//		control_memory[instructionStart(3)] = new BRANCH();
+		control_memory[instructionStart(18, 0)] = new LOAD_PC_REG_NZ();
+		
+		control_memory[instructionStart(19, 0)] = new LOAD_PC_PTR();
+		
+		control_memory[instructionStart(20, 0)] = new LOAD_PC_REG();
+		
+		control_memory[instructionStart(21, 0)] = new LOAD_PC_PTR_EQ();
+		
+		control_memory[instructionStart(22, 0)] = new LOAD_PC_PTR_NE();
+		
+		control_memory[instructionStart(23, 0)] = new LOAD_PC_PTR_LT();
+		
+		control_memory[instructionStart(24, 0)] = new LOAD_PC_PTR_LE();
+		
+		control_memory[instructionStart(25, 0)] = new LOAD_PC_PTR_GT();
+		
+		control_memory[instructionStart(26, 0)] = new LOAD_PC_PTR_GE();
+		
+		control_memory[instructionStart(27, 0)] = new LOAD_PC_PTR_MI();
+		
+		control_memory[instructionStart(28, 0)] = new LOAD_PC_PTR_PL();
+		
+		control_memory[instructionStart(29, 0)] = new LOAD_PC_PTR_VS();
+		
+		control_memory[instructionStart(30, 0)] = new LOAD_PC_PTR_VC();
 	}
 	
 	/*
@@ -286,7 +311,7 @@ public class Controller {
 	/**
 	 * LOAD_B_RHS
 	 * 
-	 * Move the right hand value into B
+	 * Move the right hand register value into B
 	 */
 	public class LOAD_B_RHS implements RTN {
 		public String toString() {
@@ -510,7 +535,6 @@ public class Controller {
 				data_path.bank.store(data_path.IR.decimal(19, 15));
 				
 				data_path.alu.set_operation(ALU.Operation.AND);
-				data_path.alu.set_isSettingFlags(false);
 				
 				data_path.C.load();
 			} catch (Exception e) {
@@ -542,7 +566,6 @@ public class Controller {
 				data_path.bank.store(data_path.IR.decimal(19, 15));
 				
 				data_path.alu.set_operation(ALU.Operation.OR);
-				data_path.alu.set_isSettingFlags(false);
 				
 				data_path.C.load();
 			} catch (Exception e) {
@@ -574,7 +597,6 @@ public class Controller {
 				data_path.bank.store(data_path.IR.decimal(19, 15));
 				
 				data_path.alu.set_operation(ALU.Operation.XOR);
-				data_path.alu.set_isSettingFlags(false);
 				
 				data_path.C.load();
 			} catch (Exception e) {
@@ -736,41 +758,454 @@ public class Controller {
 
 		@Override
 		public int advance() {
-			return NEXT;
+			return START;
 		}
 	}
 	
 	/*
-	 * eline: Added BRANCH class
+	 * eline: Added LOAD_PC_PTR class
 	 */
 	/**
-	 * Branch (4?)
+	 * LOAD_PC_PTR
 	 * 
-	 * Changes the program counter appropriately
+	 * Move the pointer value into PC
 	 */
-	public class BRANCH implements RTN {
+	public class LOAD_PC_PTR implements RTN {
 		public String toString() {
-			return "BRANCH";
+			return "LOAD_PC_PTR";
 		}
 		
 		public void execute() {
-			// IR representation
-			// |15 12|11            00|
-			// | op  |relative address|
-			
 			try {
-				data_path.PC.increment(2 * data_path.IR.decimal(/*change*/11, 0));
+				data_path.master_bus.store(data_path.IR.decimal(19, 0));
+				data_path.PC.load();
 			} catch (Exception e) {
-				System.err.println("In Controller:BRANCH:execute");
-				e.printStackTrace();
+				System.err.println("In Controller:LOAD_PC_PTR:execute");
+				System.err.println(e);
 			}
 		}
-
-		@Override
+		
 		public int advance() {
-			// TODO Auto-generated method stub
 			return START;
 		}
 	}
-
+	
+	/*
+	 * eline: Added LOAD_PC_REG_Z class
+	 */
+	/**
+	 * LOAD_PC_REG_Z
+	 * 
+	 * If the register is zero, then move the pointer value into PC
+	 */
+	public class LOAD_PC_REG_Z implements RTN {
+		public String toString() {
+			return "LOAD_PC_REG_Z";
+		}
+		
+		public void execute() {
+			try {
+				if (data_path.bank.decimal(data_path.IR.decimal(24, 20)) == 0) {
+					data_path.master_bus.store(data_path.IR.decimal(19, 0));
+					data_path.PC.load();
+				}
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_PC_REG_Z:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added LOAD_PC_REG_NZ class
+	 */
+	/**
+	 * LOAD_PC_REG_NZ
+	 * 
+	 * If the register isn't zero, then move the pointer value into PC
+	 */
+	public class LOAD_PC_REG_NZ implements RTN {
+		public String toString() {
+			return "LOAD_PC_REG_NZ";
+		}
+		
+		public void execute() {
+			try {
+				if (data_path.bank.decimal(data_path.IR.decimal(24, 20)) != 0) {
+					data_path.master_bus.store(data_path.IR.decimal(19, 0));
+					data_path.PC.load();
+				}
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_PC_REG_NZ:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added LOAD_PC_REG class
+	 */
+	/**
+	 * LOAD_PC_REG
+	 * 
+	 * Move the register value into PC
+	 */
+	public class LOAD_PC_REG implements RTN {
+		public String toString() {
+			return "LOAD_PC_REG";
+		}
+		
+		public void execute() {
+			try {
+				data_path.bank.store(data_path.IR.decimal(24, 20));
+				data_path.PC.load();
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_PC_REG:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added LOAD_PC_PTR_EQ class
+	 */
+	/**
+	 * LOAD_PC_PTR_EQ
+	 * 
+	 * If Z == 1, then move the pointer value into PC
+	 */
+	public class LOAD_PC_PTR_EQ implements RTN {
+		public String toString() {
+			return "LOAD_PC_PTR_EQ";
+		}
+		
+		public void execute() {
+			try {
+				if (data_path.alu.zeroFlag.decimal() == 1) {
+					data_path.master_bus.store(data_path.IR.decimal(19, 0));
+					data_path.PC.load();
+				}
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_PC_PTR_EQ:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added LOAD_PC_PTR_NE class
+	 */
+	/**
+	 * LOAD_PC_PTR_NE
+	 * 
+	 * If Z == 0, then move the pointer value into PC
+	 */
+	public class LOAD_PC_PTR_NE implements RTN {
+		public String toString() {
+			return "LOAD_PC_PTR_NE";
+		}
+		
+		public void execute() {
+			try {
+				if (data_path.alu.zeroFlag.decimal() == 0) {
+					data_path.master_bus.store(data_path.IR.decimal(19, 0));
+					data_path.PC.load();
+				}
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_PC_PTR_NE:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added LOAD_PC_PTR_LT class
+	 */
+	/**
+	 * LOAD_PC_PTR_LT
+	 * 
+	 * If N != V, then move the pointer value into PC
+	 */
+	public class LOAD_PC_PTR_LT implements RTN {
+		public String toString() {
+			return "LOAD_PC_PTR_LT";
+		}
+		
+		public void execute() {
+			try {
+				if (data_path.alu.negativeFlag.decimal() == data_path.alu.overflowFlag.decimal()) {
+					data_path.master_bus.store(data_path.IR.decimal(19, 0));
+					data_path.PC.load();
+				}
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_PC_PTR_LT:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added LOAD_PC_PTR_LE class
+	 */
+	/**
+	 * LOAD_PC_PTR_LE
+	 * 
+	 * If !(Z == 0 && N == V), then move the pointer value into PC
+	 */
+	public class LOAD_PC_PTR_LE implements RTN {
+		public String toString() {
+			return "LOAD_PC_PTR_LE";
+		}
+		
+		public void execute() {
+			try {
+				if ( !(data_path.alu.zeroFlag.decimal() == 0 && data_path.alu.negativeFlag.decimal() == data_path.alu.overflowFlag.decimal())) {
+					data_path.master_bus.store(data_path.IR.decimal(19, 0));
+					data_path.PC.load();
+				}
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_PC_PTR_LE:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added LOAD_PC_PTR_GT class
+	 */
+	/**
+	 * LOAD_PC_PTR_GT
+	 * 
+	 * If Z == 0 && N == V, then move the pointer value into PC
+	 */
+	public class LOAD_PC_PTR_GT implements RTN {
+		public String toString() {
+			return "LOAD_PC_PTR_GT";
+		}
+		
+		public void execute() {
+			try {
+				if (data_path.alu.zeroFlag.decimal() == 0 && data_path.alu.negativeFlag.decimal() == data_path.alu.overflowFlag.decimal()) {
+					data_path.master_bus.store(data_path.IR.decimal(19, 0));
+					data_path.PC.load();
+				}
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_PC_PTR_GT:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added LOAD_PC_PTR_GE class
+	 */
+	/**
+	 * LOAD_PC_PTR_GE
+	 * 
+	 * If N == V, then move the pointer value into PC
+	 */
+	public class LOAD_PC_PTR_GE implements RTN {
+		public String toString() {
+			return "LOAD_B_PTR_GE";
+		}
+		
+		public void execute() {
+			try {
+				if (data_path.alu.negativeFlag.decimal() == data_path.alu.overflowFlag.decimal()) {
+					data_path.master_bus.store(data_path.IR.decimal(19, 0));
+					data_path.PC.load();
+				}
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_PC_PTR_GEx:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added LOAD_PC_PTR_MI class
+	 */
+	/**
+	 * LOAD_PC_PTR_MI
+	 * 
+	 * If N == 1, then move the pointer value into PC
+	 */
+	public class LOAD_PC_PTR_MI implements RTN {
+		public String toString() {
+			return "LOAD_PC_PTR_MI";
+		}
+		
+		public void execute() {
+			try {
+				if (data_path.alu.negativeFlag.decimal() == 1) {
+					data_path.master_bus.store(data_path.IR.decimal(19, 0));
+					data_path.PC.load();
+				}
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_PC_PTR_MI:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added LOAD_PC_PTR_PL class
+	 */
+	/**
+	 * LOAD_PC_PTR_PL
+	 * 
+	 * If N == 0, then move the pointer value into PC
+	 */
+	public class LOAD_PC_PTR_PL implements RTN {
+		public String toString() {
+			return "LOAD_PC_PTR_PL";
+		}
+		
+		public void execute() {
+			try {
+				if (data_path.alu.negativeFlag.decimal() == 0) {
+					data_path.master_bus.store(data_path.IR.decimal(19, 0));
+					data_path.PC.load();
+				}
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_PC_PTR_PL:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added LOAD_PC_PTR_VS class
+	 */
+	/**
+	 * LOAD_PC_PTR_VS
+	 * 
+	 * If V == 1, then move the pointer value into PC
+	 */
+	public class LOAD_PC_PTR_VS implements RTN {
+		public String toString() {
+			return "LOAD_PC_PTR_VS";
+		}
+		
+		public void execute() {
+			try {
+				if (data_path.alu.overflowFlag.decimal() == 1) {
+					data_path.master_bus.store(data_path.IR.decimal(19, 0));
+					data_path.PC.load();
+				}
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_PC_PTR_VS:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added LOAD_PC_PTR_VC class
+	 */
+	/**
+	 * LOAD_PC_PTR_VC
+	 * 
+	 * If V == 0, then move the pointer value into PC
+	 */
+	public class LOAD_PC_PTR_VC implements RTN {
+		public String toString() {
+			return "LOAD_PC_PTR_VC";
+		}
+		
+		public void execute() {
+			try {
+				if (data_path.alu.overflowFlag.decimal() == 0) {
+					data_path.master_bus.store(data_path.IR.decimal(19, 0));
+					data_path.PC.load();
+				}
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_PC_PTR_VC:execute");
+				System.err.println(e);
+			}
+		}
+		
+		public int advance() {
+			return START;
+		}
+	}
+	
+	/*
+	 * eline: Added LOAD_REG_PTR class
+	 */
+	/**
+	 * LOAD_REG_PTR
+	 * 
+	 * Move the value of the pointer immediate into the register
+	 */
+	public class LOAD_REG_PTR implements RTN {
+		@Override
+		public String toString() {
+			return "LOAD_REG_PTR";
+		}
+		
+		@Override
+		public void execute() {
+			try {
+				data_path.master_bus.store(data_path.IR.decimal(19, 0));
+				data_path.bank.load(data_path.IR.decimal(24, 20));
+			} catch (Exception e) {
+				System.err.println("In Controller:LOAD_REG_PTR:execute");
+				System.err.println(e);
+			}
+		}
+		
+		@Override
+		public int advance() {
+			return START;
+		}
+	}
 }
