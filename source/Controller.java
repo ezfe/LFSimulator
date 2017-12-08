@@ -1098,7 +1098,7 @@ public class Controller {
 	/**
 	 * LOAD_PC_PTR_LE
 	 * 
-	 * If !(Z == 0 && N == V), then move the pointer value into PC
+	 * If !(Z == 0 AND N == V), then move the pointer value into PC
 	 */
 	public class LOAD_PC_PTR_LE implements RTN {
 		public String toString() {
@@ -1129,7 +1129,7 @@ public class Controller {
 	/**
 	 * LOAD_PC_PTR_GT
 	 * 
-	 * If Z == 0 && N == V, then move the pointer value into PC
+	 * If Z == 0 AND N == V, then move the pointer value into PC
 	 */
 	public class LOAD_PC_PTR_GT implements RTN {
 		public String toString() {

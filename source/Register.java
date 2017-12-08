@@ -46,7 +46,7 @@ public class Register extends BitContainer {
 	 */
 	/**
 	 * Set the source of the register
-	 * @param bus The source
+	 * @param source The source
 	 */
 	public void set_source(BitProvider source) {
 		this.source = source;
@@ -57,7 +57,7 @@ public class Register extends BitContainer {
 	 */
 	/**
 	 * Set the destination bus of the register
-	 * @param bus The destination
+	 * @param destination The destination
 	 */
 	public void set_destination(BitContainer destination) {
 		this.destination = destination;

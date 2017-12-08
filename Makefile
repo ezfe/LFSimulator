@@ -9,4 +9,4 @@ run:
 javadoc:
 	rm -rf docs
 	mkdir docs
-	javadoc -d docs/ src/*.java
+	javadoc -d docs/ source/*.java

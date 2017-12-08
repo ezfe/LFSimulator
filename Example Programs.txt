@@ -27,7 +27,7 @@ binary
 00100110000000000000000000000100
 --------------------------------
 
-2. Logical and, or, xor
+2. Demonstrates with a truth table, the output of AND, OR, and XOR. The output will be shown in Registers 2, 3, and 4.
 
 MOVZ R0 0b1100
 MOVZ R1 0b1010
@@ -44,7 +44,7 @@ binary
 00010110010000000000010000000000
 --------------------------------
 
-3. Conditional branching, flags, loops
+3. Conditional branching, flags, loops. After a certain number of iterations, R2 will be filled with an identifiable value.
 
 a:
 ADDI R1 R1 #1
