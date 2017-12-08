@@ -1,16 +1,19 @@
-/***
+/**
  * Bus class used for temporarily storing values between registers.
  */
 public class Bus extends BitContainer {
 
 	/*
-	 * Moved data fields to BitContainer abstract class
+	 * eline: Moved data fields to BitContainer abstract class
 	 */
 
-	/* Primary constructor */
+	/**
+	 * Create a BUS
+	 * @param wordsize The wordsize for the bus
+	 */
 	public Bus(int wordsize) {
 		/*
-		 * Moved construction to BitContainer abstract class
+		 * eline: Moved construction to BitContainer abstract class
 		 */
 		super(wordsize);
 	}

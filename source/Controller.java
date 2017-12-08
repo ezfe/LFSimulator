@@ -3,9 +3,15 @@
  */
 public class Controller {
 
-	/* Object data fields */
-	int memory_size;
+	/*
+	 * eline: Added INSTURCTION_SPACE constant
+	 */
+	/**
+	 * The number of control_memory slots for each instruction
+	 */
 	private final int INSTRUCTION_SPACE = 5;
+
+	int memory_size;
 	RTN[] control_memory;
 	CPU data_path;
 
@@ -21,26 +27,29 @@ public class Controller {
 
 	/**
 	 * Create a controller
-	 * @param cpu The CPU the controller uses
+	 * 
+	 * @param cpu
+	 *            The CPU the controller uses
 	 */
 	public Controller(CPU cpu) {
 		memory_size = 512;
 		data_path = cpu;
 
 		control_memory = new RTN[memory_size];
+		/*
+		 * eline: Updated with new function name
+		 */
 		populateControlMemory();
 
 		reset();
 	}
 
+	/**
+	 * Perform the next RTN instruction
+	 */
 	public void increment_clock() {
 		System.err.println(control_memory[current_entry]);
-		try {
-			control_memory[current_entry].execute();
-		} catch (Exception e) {
-			System.err.println("In Controller:increment_clock");
-			System.err.println(e);
-		}
+		control_memory[current_entry].execute();
 
 		switch (control_memory[current_entry].advance()) {
 
@@ -56,6 +65,10 @@ public class Controller {
 
 		case CMDNAME: {
 			try {
+				/*
+				 * eline: Perform math in function instead of inline eline: Adjusted to new bit
+				 * boundaries
+				 */
 				current_entry = instructionStart(data_path.IR.decimal(31, 25), 0);
 				System.err.println("--------");
 				System.err.println(data_path.IR.binary());
@@ -71,11 +84,20 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Convert the current RTN to String
+	 * 
+	 * @return The String of the current RTN
+	 */
 	public String current_rtn() {
 		return control_memory[current_entry].toString();
 	}
 
+	/**
+	 * Reset simulation
+	 */
 	public void reset() {
+		// TODO: Do more?
 		current_entry = 0;
 	}
 
@@ -87,109 +109,208 @@ public class Controller {
 		control_memory[0] = new Fetch0();
 		control_memory[1] = new Fetch1();
 		control_memory[2] = new Fetch2();
-		
-		/* 
-		 * Load the instructions
-		 * Information on instructions can be found in the included report
+
+		/*
+		 * Load the instructions Information on instructions can be found in the
+		 * included report
 		 */
 		control_memory[instructionStart(0, 0)] = new NOP();
-		
+
+		/*
+		 * eline: Removed LOADI0
+		 */
+
+		/*
+		 * ADD
+		 */
 		control_memory[instructionStart(1, 0)] = new LOAD_B_RHS();
 		control_memory[instructionStart(1, 1)] = new ADD_LHS_B();
 		control_memory[instructionStart(1, 2)] = new LOAD_DEST_C();
-		
+
+		/*
+		 * SUB
+		 */
 		control_memory[instructionStart(2, 0)] = new LOAD_B_RHS();
 		control_memory[instructionStart(2, 1)] = new SUB_LHS_B();
 		control_memory[instructionStart(2, 2)] = new LOAD_DEST_C();
 
+		/*
+		 * ADDI
+		 */
 		control_memory[instructionStart(3, 0)] = new LOAD_B_IMM();
 		control_memory[instructionStart(3, 1)] = new ADD_LHS_B();
 		control_memory[instructionStart(3, 2)] = new LOAD_DEST_C();
 
+		/*
+		 * SUBI
+		 */
 		control_memory[instructionStart(4, 0)] = new LOAD_B_IMM();
 		control_memory[instructionStart(4, 1)] = new SUB_LHS_B();
 		control_memory[instructionStart(4, 2)] = new LOAD_DEST_C();
 
+		/*
+		 * ADDS
+		 */
 		control_memory[instructionStart(5, 0)] = new LOAD_B_RHS();
 		control_memory[instructionStart(5, 1)] = new ADDS_LHS_B();
 		control_memory[instructionStart(5, 2)] = new LOAD_DEST_C();
-		
+
+		/*
+		 * SUBS
+		 */
 		control_memory[instructionStart(6, 0)] = new LOAD_B_RHS();
 		control_memory[instructionStart(6, 1)] = new SUBS_LHS_B();
 		control_memory[instructionStart(6, 2)] = new LOAD_DEST_C();
 
+		/*
+		 * ADDIS
+		 */
 		control_memory[instructionStart(7, 0)] = new LOAD_B_IMM();
 		control_memory[instructionStart(7, 1)] = new ADDS_LHS_B();
 		control_memory[instructionStart(7, 2)] = new LOAD_DEST_C();
-		
+
+		/*
+		 * SUBIS
+		 */
 		control_memory[instructionStart(8, 0)] = new LOAD_B_IMM();
 		control_memory[instructionStart(8, 1)] = new SUBS_LHS_B();
 		control_memory[instructionStart(8, 2)] = new LOAD_DEST_C();
 
+		/*
+		 * AND
+		 */
 		control_memory[instructionStart(9, 0)] = new LOAD_B_RHS();
 		control_memory[instructionStart(9, 1)] = new AND_LHS_B();
 		control_memory[instructionStart(9, 2)] = new LOAD_DEST_C();
-		
+
+		/*
+		 * ORR
+		 */
 		control_memory[instructionStart(10, 0)] = new LOAD_B_RHS();
 		control_memory[instructionStart(10, 1)] = new ORR_LHS_B();
 		control_memory[instructionStart(10, 2)] = new LOAD_DEST_C();
-		
+
+		/*
+		 * EOR
+		 */
 		control_memory[instructionStart(11, 0)] = new LOAD_B_RHS();
 		control_memory[instructionStart(11, 1)] = new EOR_LHS_B();
 		control_memory[instructionStart(11, 2)] = new LOAD_DEST_C();
 
+		/*
+		 * ANDI
+		 */
 		control_memory[instructionStart(12, 0)] = new LOAD_B_IMM();
 		control_memory[instructionStart(12, 1)] = new AND_LHS_B();
 		control_memory[instructionStart(12, 2)] = new LOAD_DEST_C();
-		
+
+		/*
+		 * ORRI
+		 */
 		control_memory[instructionStart(13, 0)] = new LOAD_B_IMM();
 		control_memory[instructionStart(13, 1)] = new ORR_LHS_B();
 		control_memory[instructionStart(13, 2)] = new LOAD_DEST_C();
-		
+
+		/*
+		 * EORI
+		 */
 		control_memory[instructionStart(14, 0)] = new LOAD_B_IMM();
 		control_memory[instructionStart(14, 1)] = new EOR_LHS_B();
 		control_memory[instructionStart(14, 2)] = new LOAD_DEST_C();
-		
+
+		/*
+		 * LDUR
+		 */
 		control_memory[instructionStart(15, 0)] = new LOAD_B_IMM();
 		control_memory[instructionStart(15, 1)] = new ADD_LHS_B();
 		control_memory[instructionStart(15, 2)] = new LDUR2();
 		control_memory[instructionStart(15, 3)] = new LDUR3();
 		control_memory[instructionStart(15, 4)] = new LDUR4();
-		
+
+		/*
+		 * STUR
+		 */
 		control_memory[instructionStart(16, 0)] = new LOAD_B_IMM();
 		control_memory[instructionStart(16, 1)] = new ADD_LHS_B();
 		control_memory[instructionStart(16, 2)] = new STUR2();
 		control_memory[instructionStart(16, 3)] = new STUR3();
 
+		/*
+		 * CBZ
+		 */
 		control_memory[instructionStart(17, 0)] = new LOAD_PC_REG_Z();
-		
+
+		/*
+		 * CBNZ
+		 */
 		control_memory[instructionStart(18, 0)] = new LOAD_PC_REG_NZ();
-		
+
+		/*
+		 * B
+		 */
 		control_memory[instructionStart(19, 0)] = new LOAD_PC_PTR();
-		
+
+		/*
+		 * BR
+		 */
 		control_memory[instructionStart(20, 0)] = new LOAD_PC_REG();
-		
+
+		/*
+		 * B.EQ
+		 */
 		control_memory[instructionStart(21, 0)] = new LOAD_PC_PTR_EQ();
-		
+
+		/*
+		 * B.NE
+		 */
 		control_memory[instructionStart(22, 0)] = new LOAD_PC_PTR_NE();
-		
+
+		/*
+		 * B.LT
+		 */
 		control_memory[instructionStart(23, 0)] = new LOAD_PC_PTR_LT();
-		
+
+		/*
+		 * B.LE
+		 */
 		control_memory[instructionStart(24, 0)] = new LOAD_PC_PTR_LE();
-		
+
+		/*
+		 * B.GT
+		 */
 		control_memory[instructionStart(25, 0)] = new LOAD_PC_PTR_GT();
-		
+
+		/*
+		 * B.GE
+		 */
 		control_memory[instructionStart(26, 0)] = new LOAD_PC_PTR_GE();
-		
+
+		/*
+		 * B.MI
+		 */
 		control_memory[instructionStart(27, 0)] = new LOAD_PC_PTR_MI();
-		
+
+		/*
+		 * B.PL
+		 */
 		control_memory[instructionStart(28, 0)] = new LOAD_PC_PTR_PL();
-		
+
+		/*
+		 * B.VS
+		 */
 		control_memory[instructionStart(29, 0)] = new LOAD_PC_PTR_VS();
-		
+
+		/*
+		 * B.VC
+		 */
 		control_memory[instructionStart(30, 0)] = new LOAD_PC_PTR_VC();
+
+		/*
+		 * MOVZ
+		 */
+		control_memory[instructionStart(31, 0)] = new LOAD_REG_PTR();
 	}
-	
+
 	/*
 	 * eline: Extracted isntruction adding logic
 	 */
@@ -201,20 +322,25 @@ public class Controller {
 	 * eline: Changed from class to interface
 	 */
 	public interface RTN {
-		public String toString();
-
+		/**
+		 * Execute the RTN
+		 */
 		public void execute();
 
+		/**
+		 * How to advance
+		 * 
+		 * @return START, NEXT, etc..
+		 */
 		public int advance();
 	};
 
 	/**
-	 * FETCH 0
+	 * Fetch0
 	 * 
 	 * Store the program counter in the memory address register
 	 */
 	public class Fetch0 implements RTN {
-
 		public String toString() {
 			return new String("Fetch0");
 		}
@@ -236,9 +362,10 @@ public class Controller {
 	}
 
 	/**
-	 * FETCH 1
+	 * FETCH1
 	 * 
-	 * Increments the program counter and loads (previous pc) to memory data register 
+	 * Increments the program counter and loads (previous pc) to memory data
+	 * register
 	 */
 	public class Fetch1 implements RTN {
 		public String toString() {
@@ -246,7 +373,10 @@ public class Controller {
 		}
 
 		public void execute() {
-			data_path.PC.increment(4);
+			/*
+			 * eline: Properly increment based on wordsize
+			 */
+			data_path.PC.increment(data_path.getWordSize() / 8);
 			data_path.main_memory.memory_load();
 		}
 
@@ -256,12 +386,11 @@ public class Controller {
 	}
 
 	/**
-	 * FETCH 2
+	 * FETCH2
 	 * 
 	 * Moves the data from the memory data register to the instruction register
 	 */
 	public class Fetch2 implements RTN {
-
 		public String toString() {
 			return new String("Fetch2");
 		}
@@ -282,13 +411,12 @@ public class Controller {
 	}
 
 	/**
-	 * No Operation (0)
+	 * NOP
 	 * 
-	 * The RTN for doing nothing with the processor.
-	 * Should always be in location 1 of the
-	 * control memory.
+	 * The RTN for doing nothing with the processor. Should always be in location 1
+	 * of the control memory.
 	 */
-	public class NOP implements RTN {		
+	public class NOP implements RTN {
 		public String toString() {
 			return new String("NOP");
 		}
@@ -304,7 +432,7 @@ public class Controller {
 	/*
 	 * eline: Removed LOADI0 class
 	 */
-	
+
 	/*
 	 * eline: Added LOAD_B_RHS class
 	 */
@@ -317,7 +445,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_B_RHS";
 		}
-		
+
 		public void execute() {
 			try {
 				data_path.bank.store(data_path.IR.decimal(14, 10));
@@ -327,12 +455,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return NEXT;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_B_IMM class
 	 */
@@ -345,7 +473,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_B_IMM";
 		}
-		
+
 		public void execute() {
 			try {
 				data_path.master_bus.store(data_path.IR.decimal(14, 0));
@@ -355,12 +483,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return NEXT;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_DEST_C class
 	 */
@@ -373,7 +501,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_DEST_C";
 		}
-		
+
 		public void execute() {
 			try {
 				data_path.C.store();
@@ -383,12 +511,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added ADD_LHS_B class
 	 */
@@ -401,26 +529,26 @@ public class Controller {
 		public String toString() {
 			return "ADD_LHS_B";
 		}
-		
+
 		public void execute() {
 			try {
 				data_path.bank.store(data_path.IR.decimal(19, 15));
-				
+
 				data_path.alu.set_operation(ALU.Operation.ADD);
 				data_path.alu.set_isSettingFlags(false);
-				
+
 				data_path.C.load();
 			} catch (Exception e) {
 				System.err.println("In Controller:ADD_LHS_B:execute");
 				e.printStackTrace();
 			}
 		}
-		
+
 		public int advance() {
 			return NEXT;
 		}
 	}
-	
+
 	/*
 	 * eline: Added SUB_LHS_B class
 	 */
@@ -433,26 +561,26 @@ public class Controller {
 		public String toString() {
 			return "SUB_LHS_B";
 		}
-		
+
 		public void execute() {
 			try {
 				data_path.bank.store(data_path.IR.decimal(19, 15));
-				
+
 				data_path.alu.set_operation(ALU.Operation.SUBTRACT);
 				data_path.alu.set_isSettingFlags(false);
-				
+
 				data_path.C.load();
 			} catch (Exception e) {
 				System.err.println("In Controller:SUB_LHS_B:execute");
 				e.printStackTrace();
 			}
 		}
-		
+
 		public int advance() {
 			return NEXT;
 		}
 	}
-	
+
 	/*
 	 * eline: Added ADDS_LHS_B class
 	 */
@@ -465,26 +593,26 @@ public class Controller {
 		public String toString() {
 			return "ADDS_LHS_B";
 		}
-		
+
 		public void execute() {
 			try {
 				data_path.bank.store(data_path.IR.decimal(19, 15));
-				
+
 				data_path.alu.set_operation(ALU.Operation.ADD);
 				data_path.alu.set_isSettingFlags(true);
-				
+
 				data_path.C.load();
 			} catch (Exception e) {
 				System.err.println("In Controller:ADDS_LHS_B:execute");
 				e.printStackTrace();
 			}
 		}
-		
+
 		public int advance() {
 			return NEXT;
 		}
 	}
-	
+
 	/*
 	 * eline: Added SUBS_LHS_B class
 	 */
@@ -497,26 +625,26 @@ public class Controller {
 		public String toString() {
 			return "SUBS_LHS_B";
 		}
-		
+
 		public void execute() {
 			try {
 				data_path.bank.store(data_path.IR.decimal(19, 15));
-				
+
 				data_path.alu.set_operation(ALU.Operation.SUBTRACT);
 				data_path.alu.set_isSettingFlags(true);
-				
+
 				data_path.C.load();
 			} catch (Exception e) {
 				System.err.println("In Controller:SUBS_LHS_B:execute");
 				e.printStackTrace();
 			}
 		}
-		
+
 		public int advance() {
 			return NEXT;
 		}
 	}
-	
+
 	/*
 	 * eline: Added AND_LHS_B class
 	 */
@@ -529,25 +657,25 @@ public class Controller {
 		public String toString() {
 			return "AND_LHS_B";
 		}
-		
+
 		public void execute() {
 			try {
 				data_path.bank.store(data_path.IR.decimal(19, 15));
-				
+
 				data_path.alu.set_operation(ALU.Operation.AND);
-				
+
 				data_path.C.load();
 			} catch (Exception e) {
 				System.err.println("In Controller:AND_LHS_B:execute");
 				e.printStackTrace();
 			}
 		}
-		
+
 		public int advance() {
 			return NEXT;
 		}
 	}
-	
+
 	/*
 	 * eline: Added ORR_LHS_B class
 	 */
@@ -560,25 +688,25 @@ public class Controller {
 		public String toString() {
 			return "ORR_LHS_B";
 		}
-		
+
 		public void execute() {
 			try {
 				data_path.bank.store(data_path.IR.decimal(19, 15));
-				
+
 				data_path.alu.set_operation(ALU.Operation.OR);
-				
+
 				data_path.C.load();
 			} catch (Exception e) {
 				System.err.println("In Controller:ORR_LHS_B:execute");
 				e.printStackTrace();
 			}
 		}
-		
+
 		public int advance() {
 			return NEXT;
 		}
 	}
-	
+
 	/*
 	 * eline: Added EOR_LHS_B class
 	 */
@@ -591,25 +719,25 @@ public class Controller {
 		public String toString() {
 			return "EOR_LHS_B";
 		}
-		
+
 		public void execute() {
 			try {
 				data_path.bank.store(data_path.IR.decimal(19, 15));
-				
+
 				data_path.alu.set_operation(ALU.Operation.XOR);
-				
+
 				data_path.C.load();
 			} catch (Exception e) {
 				System.err.println("In Controller:EOR_LHS_B:execute");
 				e.printStackTrace();
 			}
 		}
-		
+
 		public int advance() {
 			return NEXT;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LDUR2 class
 	 */
@@ -619,11 +747,10 @@ public class Controller {
 	 * Load C into MA
 	 */
 	public class LDUR2 implements RTN {
-		@Override
 		public String toString() {
 			return "LDUR2";
 		}
-		@Override
+
 		public void execute() {
 			try {
 				data_path.C.store();
@@ -634,12 +761,11 @@ public class Controller {
 			}
 		}
 
-		@Override
 		public int advance() {
 			return NEXT;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LDUR3 class
 	 */
@@ -649,11 +775,10 @@ public class Controller {
 	 * Load main memory
 	 */
 	public class LDUR3 implements RTN {
-		@Override
 		public String toString() {
 			return "LDUR3";
 		}
-		@Override
+
 		public void execute() {
 			try {
 				data_path.main_memory.memory_load();
@@ -663,12 +788,11 @@ public class Controller {
 			}
 		}
 
-		@Override
 		public int advance() {
 			return NEXT;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LDUR4 class
 	 */
@@ -678,11 +802,10 @@ public class Controller {
 	 * Store MD in destination register
 	 */
 	public class LDUR4 implements RTN {
-		@Override
 		public String toString() {
 			return "LDUR4";
 		}
-		@Override
+
 		public void execute() {
 			try {
 				data_path.MD.store();
@@ -693,32 +816,29 @@ public class Controller {
 			}
 		}
 
-		@Override
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added STUR2 class
 	 */
 	/**
 	 * STUR2
 	 * 
-	 * Load C into MA
-	 * Load source register into MD
+	 * Load C into MA Load source register into MD
 	 */
 	public class STUR2 implements RTN {
-		@Override
 		public String toString() {
 			return "STUR2";
 		}
-		@Override
+
 		public void execute() {
 			try {
 				data_path.C.store();
 				data_path.MA.load();
-				
+
 				data_path.bank.store(data_path.IR.decimal(24, 20));
 				data_path.MD.load();
 			} catch (Exception e) {
@@ -727,12 +847,11 @@ public class Controller {
 			}
 		}
 
-		@Override
 		public int advance() {
 			return NEXT;
 		}
 	}
-	
+
 	/*
 	 * eline: Added STUR3 class
 	 */
@@ -742,11 +861,10 @@ public class Controller {
 	 * Store main memory
 	 */
 	public class STUR3 implements RTN {
-		@Override
 		public String toString() {
 			return "STUR3";
 		}
-		@Override
+
 		public void execute() {
 			try {
 				data_path.main_memory.memory_store();
@@ -756,12 +874,11 @@ public class Controller {
 			}
 		}
 
-		@Override
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_PTR class
 	 */
@@ -774,7 +891,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_PC_PTR";
 		}
-		
+
 		public void execute() {
 			try {
 				data_path.master_bus.store(data_path.IR.decimal(19, 0));
@@ -784,12 +901,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_REG_Z class
 	 */
@@ -802,7 +919,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_PC_REG_Z";
 		}
-		
+
 		public void execute() {
 			try {
 				if (data_path.bank.decimal(data_path.IR.decimal(24, 20)) == 0) {
@@ -814,12 +931,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_REG_NZ class
 	 */
@@ -832,7 +949,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_PC_REG_NZ";
 		}
-		
+
 		public void execute() {
 			try {
 				if (data_path.bank.decimal(data_path.IR.decimal(24, 20)) != 0) {
@@ -844,12 +961,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_REG class
 	 */
@@ -862,7 +979,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_PC_REG";
 		}
-		
+
 		public void execute() {
 			try {
 				data_path.bank.store(data_path.IR.decimal(24, 20));
@@ -872,12 +989,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_PTR_EQ class
 	 */
@@ -890,7 +1007,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_PC_PTR_EQ";
 		}
-		
+
 		public void execute() {
 			try {
 				if (data_path.alu.zeroFlag.decimal() == 1) {
@@ -902,12 +1019,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_PTR_NE class
 	 */
@@ -920,7 +1037,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_PC_PTR_NE";
 		}
-		
+
 		public void execute() {
 			try {
 				if (data_path.alu.zeroFlag.decimal() == 0) {
@@ -932,12 +1049,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_PTR_LT class
 	 */
@@ -950,7 +1067,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_PC_PTR_LT";
 		}
-		
+
 		public void execute() {
 			try {
 				if (data_path.alu.negativeFlag.decimal() == data_path.alu.overflowFlag.decimal()) {
@@ -962,12 +1079,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_PTR_LE class
 	 */
@@ -980,10 +1097,11 @@ public class Controller {
 		public String toString() {
 			return "LOAD_PC_PTR_LE";
 		}
-		
+
 		public void execute() {
 			try {
-				if ( !(data_path.alu.zeroFlag.decimal() == 0 && data_path.alu.negativeFlag.decimal() == data_path.alu.overflowFlag.decimal())) {
+				if (!(data_path.alu.zeroFlag.decimal() == 0
+						&& data_path.alu.negativeFlag.decimal() == data_path.alu.overflowFlag.decimal())) {
 					data_path.master_bus.store(data_path.IR.decimal(19, 0));
 					data_path.PC.load();
 				}
@@ -992,12 +1110,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_PTR_GT class
 	 */
@@ -1010,10 +1128,11 @@ public class Controller {
 		public String toString() {
 			return "LOAD_PC_PTR_GT";
 		}
-		
+
 		public void execute() {
 			try {
-				if (data_path.alu.zeroFlag.decimal() == 0 && data_path.alu.negativeFlag.decimal() == data_path.alu.overflowFlag.decimal()) {
+				if (data_path.alu.zeroFlag.decimal() == 0
+						&& data_path.alu.negativeFlag.decimal() == data_path.alu.overflowFlag.decimal()) {
 					data_path.master_bus.store(data_path.IR.decimal(19, 0));
 					data_path.PC.load();
 				}
@@ -1022,12 +1141,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_PTR_GE class
 	 */
@@ -1040,7 +1159,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_B_PTR_GE";
 		}
-		
+
 		public void execute() {
 			try {
 				if (data_path.alu.negativeFlag.decimal() == data_path.alu.overflowFlag.decimal()) {
@@ -1052,12 +1171,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_PTR_MI class
 	 */
@@ -1070,7 +1189,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_PC_PTR_MI";
 		}
-		
+
 		public void execute() {
 			try {
 				if (data_path.alu.negativeFlag.decimal() == 1) {
@@ -1082,12 +1201,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_PTR_PL class
 	 */
@@ -1100,7 +1219,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_PC_PTR_PL";
 		}
-		
+
 		public void execute() {
 			try {
 				if (data_path.alu.negativeFlag.decimal() == 0) {
@@ -1112,12 +1231,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_PTR_VS class
 	 */
@@ -1130,7 +1249,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_PC_PTR_VS";
 		}
-		
+
 		public void execute() {
 			try {
 				if (data_path.alu.overflowFlag.decimal() == 1) {
@@ -1142,12 +1261,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_PC_PTR_VC class
 	 */
@@ -1160,7 +1279,7 @@ public class Controller {
 		public String toString() {
 			return "LOAD_PC_PTR_VC";
 		}
-		
+
 		public void execute() {
 			try {
 				if (data_path.alu.overflowFlag.decimal() == 0) {
@@ -1172,12 +1291,12 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
+
 		public int advance() {
 			return START;
 		}
 	}
-	
+
 	/*
 	 * eline: Added LOAD_REG_PTR class
 	 */
@@ -1187,12 +1306,10 @@ public class Controller {
 	 * Move the value of the pointer immediate into the register
 	 */
 	public class LOAD_REG_PTR implements RTN {
-		@Override
 		public String toString() {
 			return "LOAD_REG_PTR";
 		}
-		
-		@Override
+
 		public void execute() {
 			try {
 				data_path.master_bus.store(data_path.IR.decimal(19, 0));
@@ -1202,8 +1319,7 @@ public class Controller {
 				System.err.println(e);
 			}
 		}
-		
-		@Override
+
 		public int advance() {
 			return START;
 		}

@@ -1,13 +1,10 @@
-/*
- * TODO: Changes in this file
- */
 /**
  * Low-level class for storing a single byte of information, 8-bits.
  */
 public class Byte extends BitContainer {
 
 	/*
-	 * Moved data fields to BitContainer abstract class
+	 * eline: Moved data fields to BitContainer abstract class
 	 */
 	
 	/**
@@ -15,7 +12,7 @@ public class Byte extends BitContainer {
 	 */
 	public Byte() {
 		/*
-		 * Moved construction to BitContainer abstract class
+		 * eline: Moved construction to BitContainer abstract class
 		 */
 		super(8);
 	}

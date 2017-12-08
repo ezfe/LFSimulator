@@ -4,7 +4,7 @@
 /**
  * Arithmetic Logical Unit
  */
-public class ALU extends BitRepresenting {
+public class ALU extends BitProvider {
 	
 	public enum Operation {
 		ADD, SUBTRACT, AND, OR, XOR
@@ -12,8 +12,8 @@ public class ALU extends BitRepresenting {
 	
 //	private int control[]
 	
-	private BitRepresenting source_a;
-	private BitRepresenting source_b;
+	private BitProvider source_a;
+	private BitProvider source_b;
 
 	private Operation operation = Operation.ADD;
 	private boolean isSettingFlags = false;
@@ -40,7 +40,7 @@ public class ALU extends BitRepresenting {
 	 * Set the left hand source
 	 * @param source_a The left hand source
 	 */
-	public void set_source_a(BitRepresenting source_a) {
+	public void set_source_a(BitProvider source_a) {
 		this.source_a = source_a;
 	}
 	
@@ -48,7 +48,7 @@ public class ALU extends BitRepresenting {
 	 * Set the right hand source
 	 * @param source_b The right hand source
 	 */
-	public void set_source_b(BitRepresenting source_b) {
+	public void set_source_b(BitProvider source_b) {
 		this.source_b = source_b;
 	}
 	

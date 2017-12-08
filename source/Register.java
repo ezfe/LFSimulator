@@ -13,7 +13,7 @@ public class Register extends BitContainer {
 	/*
 	 * eline: Changed to a BitContainer object
 	 */
-	private BitRepresenting source;
+	private BitProvider source;
 	private BitContainer destination;
 
 	/**
@@ -34,7 +34,7 @@ public class Register extends BitContainer {
 	 * Set the source of the register
 	 * @param bus The source
 	 */
-	public void set_source(BitRepresenting source) {
+	public void set_source(BitProvider source) {
 		this.source = source;
 	}
 

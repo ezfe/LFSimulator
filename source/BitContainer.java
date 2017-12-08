@@ -4,7 +4,7 @@
 /**
  * An object representing an array of bits, such as a register or byte
  */
-public abstract class BitContainer extends BitRepresenting {
+public abstract class BitContainer extends BitProvider {
 	/* Object data fields */
 	protected int bits[];
 	

@@ -1,8 +1,12 @@
-
-public abstract class BitRepresenting {
+/**
+ * Any class which can provide an array of bits
+ * 
+ * A class which extends this class need not actually store the bits
+ */
+public abstract class BitProvider {
 	public final int bitcount;
 
-	public BitRepresenting(int bitcount) {
+	public BitProvider(int bitcount) {
 		this.bitcount = bitcount;
 	}
 	

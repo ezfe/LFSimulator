@@ -7,6 +7,9 @@ import javax.swing.*;
  */
 public class CPU extends JPanel implements ActionListener {
 
+	/*
+	 * eline: Added serialVersionUID variable to remove warnings
+	 */
 	private static final long serialVersionUID = 1095864483548437843L;
 
 	/* Object data fields */
@@ -54,6 +57,9 @@ public class CPU extends JPanel implements ActionListener {
 	 */
 	public Bus master_bus;
 
+	/*
+	 * eline: Added alu variable
+	 */
 	/**
 	 * The Arithmetic Logical Unit
 	 */
@@ -64,7 +70,7 @@ public class CPU extends JPanel implements ActionListener {
 	private int wordsize;
 
 	public RAM main_memory;
-	private Controller controler;
+	private Controller controller;
 
 	/* Primary constructor */
 	public CPU(int wordSize, int register_cnt, RAM mem) {
@@ -101,7 +107,7 @@ public class CPU extends JPanel implements ActionListener {
 		general_purpose_reg_cnt = register_cnt;
 		wordsize = wordSize;
 		main_memory = mem;
-		controler = new Controller(this);
+		controller = new Controller(this);
 
 		master_bus = new Bus(wordsize);
 
@@ -110,11 +116,19 @@ public class CPU extends JPanel implements ActionListener {
 		MA = new Register(wordsize);
 		MD = new Register(wordsize);
 
+		/*
+		 * eline: Initialize B and C
+		 */
 		B = new Register(wordsize);
 		C = new Register(wordsize);
 
 		bank = new RegisterBank(wordsize, general_purpose_reg_cnt);
 
+		/*
+		 * eline: Initialize ALU
+		 */
+		alu = new ALU(wordsize);
+		
 		bank.set_source_bus(master_bus);
 		bank.set_destination_bus(master_bus);
 
@@ -130,7 +144,9 @@ public class CPU extends JPanel implements ActionListener {
 		main_memory.set_address_register(MA);
 		main_memory.set_data_register(MD);
 
-		alu = new ALU(wordsize);
+		/*
+		 * eline: Set ALU, B, C sources and destinations
+		 */
 		alu.set_source_a(master_bus);
 		alu.set_source_b(B);
 
@@ -176,7 +192,7 @@ public class CPU extends JPanel implements ActionListener {
 
 	public void increment_clock() {
 		clock_ticks++;
-		controler.increment_clock();
+		controller.increment_clock();
 		refresh_display();
 		main_memory.refresh_display();
 	}
@@ -195,14 +211,29 @@ public class CPU extends JPanel implements ActionListener {
 			MA.store(0x0);
 			MD.store(0x0);
 
+			/*
+			 * eline: Reset the ALU
+			 */
+			alu.zeroFlag.store(0);
+			alu.negativeFlag.store(0);
+			alu.carryFlag.store(0);
+			alu.overflowFlag.store(0);
+			
+			alu.set_operation(ALU.Operation.ADD);
+			alu.set_isSettingFlags(false);
+			
+			/*
+			 * eline: Reset B and C
+			 */
+			B.store(0);
+			C.store(0);
+			
 			for (int cnt = 0; cnt < general_purpose_reg_cnt; cnt++) {
 				bank.store(0x0, cnt);
 			}
 
-			controler.reset();
-
+			controller.reset();
 		} catch (Exception e) {
-
 			System.err.println("In CPU:reset");
 			System.err.println(e);
 		}
@@ -210,8 +241,6 @@ public class CPU extends JPanel implements ActionListener {
 	}
 
 	public void refresh_display() {
-
-		// textArea.setText(""); // clears the text
 		textArea.setText(build_display()); // stores memory as a string to widget
 	}
 
@@ -235,7 +264,7 @@ public class CPU extends JPanel implements ActionListener {
 		result.append("Wordsize   : " + wordsize + newline);
 		result.append("Reg Count  : " + general_purpose_reg_cnt + newline);
 		result.append("Clock Ticks: " + clock_ticks + newline);
-		result.append("Curr RTN   : " + controler.current_rtn() + newline);
+		result.append("Curr RTN   : " + controller.current_rtn() + newline);
 
 		result.append(newline);
 		result.append("Bus: " + master_bus.binary() + newline);
