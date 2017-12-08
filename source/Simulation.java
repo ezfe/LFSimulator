@@ -1,3 +1,9 @@
+/*
+ * Changes in this file:
+ * 
+ * - Changed register count, word size
+ */
+
 /**
  * The class that initiates all other objects.
  */

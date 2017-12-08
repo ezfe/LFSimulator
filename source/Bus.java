@@ -1,3 +1,9 @@
+/*
+ * Changes in this file:
+ * 
+ * - Moved functionality to BitContainer and BitProvider classes
+ */
+
 /**
  * Bus class used for temporarily storing values between registers.
  */

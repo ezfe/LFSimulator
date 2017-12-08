@@ -1,3 +1,11 @@
+/*
+ * Changes in this file:
+ * 
+ * - Changed some variables for display and processing logic
+ * - Revised ram display techniques
+ * - Revised word loading logic
+ */
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;

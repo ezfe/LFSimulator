@@ -1,3 +1,9 @@
+/*
+ * Changes in this file:
+ * 
+ * - Moved functionality to BitContainer and BitProvider classes
+ */
+
 /**
  * Low-level class for storing a single byte of information, 8-bits.
  */

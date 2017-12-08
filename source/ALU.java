@@ -1,5 +1,11 @@
 /*
- * eline: Created the ALU
+ * Changes in this file:
+ * 
+ * - This file is new
+ */
+
+/*
+ * eline: Created ALU class
  */
 /**
  * Arithmetic Logical Unit
@@ -9,8 +15,6 @@ public class ALU extends BitProvider {
 	public enum Operation {
 		ADD, SUBTRACT, AND, OR, XOR
 	}
-	
-//	private int control[]
 	
 	private BitProvider source_a;
 	private BitProvider source_b;

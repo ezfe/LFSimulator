@@ -1,3 +1,10 @@
+/*
+ * Changes in this file:
+ * 
+ * - Changed some method names
+ * - Removed unused functions
+ */
+
 /**
  * Class implementing a collection of registers. Source and destination
  * selection is implemented here to control how the bus is manipulated by this

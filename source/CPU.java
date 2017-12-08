@@ -1,3 +1,9 @@
+/*
+ * Changes in this file:
+ * 
+ * - Added ALU, B and C registers
+ */
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

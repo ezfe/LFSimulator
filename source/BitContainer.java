@@ -1,4 +1,10 @@
 /*
+ * Changes in this file:
+ * 
+ * - This file is new
+ */
+
+/*
  * eline: Created BitContainer class
  */
 /**

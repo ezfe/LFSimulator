@@ -1,3 +1,12 @@
+/*
+ * Changes in this file:
+ * 
+ * - This file is new
+ */
+
+/*
+ * eline: Created BitProvider class
+ */
 /**
  * Any class which can provide an array of bits
  * 

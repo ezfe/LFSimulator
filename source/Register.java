@@ -1,3 +1,10 @@
+/*
+ * Changes in this file:
+ * 
+ * - Moved functionality to BitContainer and BitProvider classes
+ * - Changed some method signatures
+ */
+
 /**
  * Register class for implementing memory components
  * that hang together thru the bus.

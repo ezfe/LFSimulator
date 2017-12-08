@@ -1,10 +1,17 @@
+/*
+ * Changes in this file:
+ * 
+ * - Added all instructions
+ * - Changed RTN to interface
+ */
+
 /**
  * The hardware controller for driving data path.
  */
 public class Controller {
 
 	/*
-	 * eline: Added INSTURCTION_SPACE constant
+	 * eline: Added INSTRUCTION_SPACE constant
 	 */
 	/**
 	 * The number of control_memory slots for each instruction
