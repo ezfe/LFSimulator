@@ -1,4 +1,4 @@
-/***
+/**
  * Class implementing a collection of registers. Source and destination
  * selection is implemented here to control how the bus is manipulated by this
  * device.
@@ -22,18 +22,37 @@ public class RegisterBank {
 		}
 	}
 
-	public void set_source_bus(Bus bus) {
+	/*
+	 * eline: Renamed to set_source (from set_source_bus) and changed parameter to BitProvider (from Bus)
+	 */
+	/**
+	 * Set the source for all registers in the bank
+	 * @param source The source
+	 */
+	public void set_source(BitProvider source) {
 		for (int index = 0; index < register_cnt; index++) {
-			registers[index].set_source(bus);
+			registers[index].set_source(source);
 		}
 	}
 
-	public void set_destination_bus(Bus bus) {
+	/*
+	 * eline: Renamed to set_destination (from set_destination_bus) and changed parameter to BitContainer (from Bus)
+	 */
+	/**
+	 * Set the destination for all registers in the bank
+	 * @param dest The destination
+	 */
+	public void set_destination(BitContainer dest) {
 		for (int index = 0; index < register_cnt; index++) {
-			registers[index].set_destination(bus);
+			registers[index].set_destination(dest);
 		}
 	}
 
+	/**
+	 * Load the source into a specified register
+	 * @param register_id The register
+	 * @throws Exception
+	 */
 	public void load(int register_id) throws Exception {
 		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank binary register_id out of range.");
@@ -42,6 +61,11 @@ public class RegisterBank {
 		registers[register_id].load();
 	}
 
+	/**
+	 * Store the specified register value into the destination
+	 * @param register_id THe register
+	 * @throws Exception
+	 */
 	public void store(int register_id) throws Exception {
 		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank binary register_id out of range.");
@@ -50,22 +74,20 @@ public class RegisterBank {
 		registers[register_id].store();
 	}
 
-	public void increment(int register_id) throws Exception {
-		if (register_id < 0 || register_cnt <= register_id) {
-			throw new Exception("RegisterBank binary register_id out of range.");
-		}
+	/*
+	 * eline: Removed increment function
+	 */
 
-		registers[register_id].increment();
-	}
-
-	public void negate(int register_id) throws Exception {
-		if (register_id < 0 || register_cnt <= register_id) {
-			throw new Exception("RegisterBank binary register_id out of range.");
-		}
-
-		registers[register_id].negate();
-	}
-
+	/*
+	 * eline: Removed negate function
+	 */
+	
+	/**
+	 * Convert the specified register to a binary string
+	 * @param register_id The register
+	 * @return The binary representation
+	 * @throws Exception
+	 */
 	public String binary(int register_id) throws Exception {
 		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank binary register_id out of range.");
@@ -74,6 +96,12 @@ public class RegisterBank {
 		return registers[register_id].binary();
 	}
 
+	/**
+	 * Convert the specified register to a hex string
+	 * @param register_id The register
+	 * @return The hex representation
+	 * @throws Exception
+	 */
 	public String hex(int register_id) throws Exception {
 		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank binary register_id out of range.");
@@ -95,6 +123,12 @@ public class RegisterBank {
 		return registers[register_id].decimal();
 	}
 
+	/**
+	 * Store a decimal value in the specified register
+	 * @param value The value
+	 * @param register_id The register
+	 * @throws Exception
+	 */
 	public void store(int value, int register_id) throws Exception {
 		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank store(int) register_id out of range.");
@@ -103,6 +137,12 @@ public class RegisterBank {
 		registers[register_id].store(value);
 	}
 
+	/**
+	 * Store a hex value in the specified register
+	 * @param value The hex string
+	 * @param register_id The register
+	 * @throws Exception
+	 */
 	public void store(String value, int register_id) throws Exception {
 		if (register_id < 0 || register_cnt <= register_id) {
 			throw new Exception("RegisterBank store(str) register_id out of range.");

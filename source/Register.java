@@ -1,19 +1,26 @@
-/*
- * TODO: Changes in this file
- */
 /**
  * Register class for implementing memory components
  * that hang together thru the bus.
  */
 public class Register extends BitContainer {
 	/*
-	 * Moved data fields to BitContainer abstract class
+	 * eline: Moved data fields to BitContainer abstract class
 	 */
 	
 	/*
-	 * eline: Changed to a BitContainer object
+	 * eline: Changed to a BitProvider (from Bus)
+	 */
+	/**
+	 * The source for the register
 	 */
 	private BitProvider source;
+	
+	/*
+	 * eline: Changed to a BitContainer class (from Bus)
+	 */
+	/**
+	 * The destination for the register
+	 */
 	private BitContainer destination;
 
 	/**
@@ -22,13 +29,13 @@ public class Register extends BitContainer {
 	 */
 	public Register(int wordsize) {
 		/*
-		 * Moved construction to BitContainer abstract class
+		 * eline: Moved construction to BitContainer abstract class
 		 */
 		super(wordsize);
 	}
 
 	/*
-	 * eline: Renamed to set_source, changed parameter to BitRepresenting (from Bus)
+	 * eline: Renamed to set_source, changed parameter to BitProvider (from Bus)
 	 */
 	/**
 	 * Set the source of the register

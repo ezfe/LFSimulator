@@ -129,8 +129,8 @@ public class CPU extends JPanel implements ActionListener {
 		 */
 		alu = new ALU(wordsize);
 		
-		bank.set_source_bus(master_bus);
-		bank.set_destination_bus(master_bus);
+		bank.set_source(master_bus);
+		bank.set_destination(master_bus);
 
 		PC.set_source(master_bus);
 		PC.set_destination(master_bus);
