@@ -1,3 +1,4 @@
+
 /*
  * Changes in this file:
  * 
@@ -113,9 +114,9 @@ public class RAM extends JPanel implements ActionListener {
 		/*
 		 * eline: Removed assignment for size, byte_width (as variables are removed)
 		 */
-		
+
 		/*
-		 * eline: Added assignment for wordsize 
+		 * eline: Added assignment for wordsize
 		 */
 		this.wordsize = wordsize;
 		last_access = 0;
@@ -126,14 +127,8 @@ public class RAM extends JPanel implements ActionListener {
 			memory[index] = new Byte();
 		}
 
-		//TODO: Change back
-		/*
-		 * eline: Changed from test_file.as to full path
-		 */
-		load_memory(
-				"/Users/ezekielelin/Library/Mobile Documents/com~apple~CloudDocs/Developer/Lafayette/CS 203/Project 3/test_file.o"); // load
-																																		// memory
-																																		// file
+		load_memory("test_file.o"); // load memory file
+		
 		refresh_display(); // redraw the display
 	}
 
@@ -167,7 +162,9 @@ public class RAM extends JPanel implements ActionListener {
 
 	/**
 	 * Load memory from a file
-	 * @param file_name The path to the file
+	 * 
+	 * @param file_name
+	 *            The path to the file
 	 */
 	public void load_memory(String file_name) {
 		Scanner sc = null; // initialize and create scanner mechanism
@@ -190,7 +187,8 @@ public class RAM extends JPanel implements ActionListener {
 		// load file into memory
 		try {
 			/*
-			 * eline: Changed default line_cnt. This will be set to zero before loading any data, below
+			 * eline: Changed default line_cnt. This will be set to zero before loading any
+			 * data, below
 			 */
 			int line_cnt = -1;
 
@@ -255,6 +253,7 @@ public class RAM extends JPanel implements ActionListener {
 
 	/**
 	 * Generate the String to display
+	 * 
 	 * @return The text to display
 	 */
 	public String build_display() {
@@ -344,7 +343,9 @@ public class RAM extends JPanel implements ActionListener {
 
 	/**
 	 * Get a word starting at a specific address, in binary
-	 * @param address The address
+	 * 
+	 * @param address
+	 *            The address
 	 * @return The word in binary
 	 */
 	public String getMemoryWord_binary(int address) {
@@ -361,7 +362,9 @@ public class RAM extends JPanel implements ActionListener {
 
 	/**
 	 * Get a word starting at a specific address, in hexadecimal
-	 * @param address The address
+	 * 
+	 * @param address
+	 *            The address
 	 * @return The word in hexadecimal
 	 */
 	public String getMemoryWord_hex(int address) {
@@ -379,8 +382,11 @@ public class RAM extends JPanel implements ActionListener {
 
 	/**
 	 * Update the word starting at a specific address
-	 * @param address The address
-	 * @param value The value for the word, in hexadecimal
+	 * 
+	 * @param address
+	 *            The address
+	 * @param value
+	 *            The value for the word, in hexadecimal
 	 */
 	public void setMemoryWord(int address, String value) {
 		last_access = address;
@@ -402,7 +408,9 @@ public class RAM extends JPanel implements ActionListener {
 	 */
 	/**
 	 * Set the address register
-	 * @param addr The address register
+	 * 
+	 * @param addr
+	 *            The address register
 	 */
 	public void set_address_register(BitProvider addr) {
 		address_register = addr;
@@ -413,7 +421,9 @@ public class RAM extends JPanel implements ActionListener {
 	 */
 	/**
 	 * Set the data register
-	 * @param cont The data register
+	 * 
+	 * @param cont
+	 *            The data register
 	 */
 	public void set_data_register(BitContainer cont) {
 		data_register = cont;

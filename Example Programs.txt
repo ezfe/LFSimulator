@@ -1,0 +1,61 @@
+====================
+= Example Programs =
+====================
+
+These programs can be copied and pasted into the test_file.o file. Copy everything between the --- (including the word binary, which specifies to load as a binary file, instead of HEX) The given example uses the LFA design from my Project 1, and should only be used to demonstrate what is being written.
+
+1. Basic branching, addition, subtraction, loading a value into a register
+
+B a
+b:
+MOVZ R0 #5
+MOVZ R1 #23
+SUB R2 R1 R0
+ADD R3 R1 R0
+a:
+MOVZ R0 0b11110000011110
+B b
+
+--------------------------------
+binary
+00100110000000000000000000010100
+00111110000000000000000000000101
+00111110000100000000000000010111
+00000100001000001000000000000000
+00000010001100001000000000000000
+00111110000000000011110000011110
+00100110000000000000000000000100
+--------------------------------
+
+2. Logical and, or, xor
+
+MOVZ R0 0b1100
+MOVZ R1 0b1010
+AND R2 R0 R1
+ORR R3 R0 R1
+EOR R4 R0 R1
+
+--------------------------------
+binary
+00111110000000000000000000001100
+00111110000100000000000000001010
+00010010001000000000010000000000
+00010100001100000000010000000000
+00010110010000000000010000000000
+--------------------------------
+
+3. Conditional branching, flags, loops
+
+a:
+ADDI R1 R1 #1
+SUBIS R0 R1 #5
+B.LT a
+MOVZ R2 0b1010101
+
+--------------------------------
+binary
+00000110000100001000000000000001
+00010000000000001000000000000101
+00101110000000000000000000000000
+00111110001000000000000001010101
+--------------------------------

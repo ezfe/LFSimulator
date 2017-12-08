@@ -289,8 +289,15 @@ public class CPU extends JPanel implements ActionListener {
 		result.append("B  : " + B.binary() + newline);
 		result.append("C  : " + B.binary() + newline);
 		result.append(newline);
+		
+		boolean old = alu.get_isSettingFlags();
+		alu.set_isSettingFlags(false);
 		result.append("ALU: " + alu.binary() + newline);
+		alu.set_isSettingFlags(old);
+		
 		result.append("op : " + alu.get_operation().name() + newline);
+		result.append("ZNCV: " + newline);
+		result.append(alu.zeroFlag.binary() + alu.negativeFlag.binary() + alu.carryFlag.binary() + alu.overflowFlag.binary() + newline);
 		result.append(newline);
 
 		result.append(newline + "----- Register Bank -----" + newline);

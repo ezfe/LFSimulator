@@ -179,7 +179,7 @@ public class ALU extends BitProvider {
 				final int a_sign = a[a.length - 1];
 				final int b_sign = b[b.length - 1];
 				final int res_sign = res[res.length - 1];
-				
+								
 				// Store the sign bit of the result in the negative flag
 				this.negativeFlag.store(res_sign);
 				

@@ -1077,7 +1077,7 @@ public class Controller {
 
 		public void execute() {
 			try {
-				if (data_path.alu.negativeFlag.decimal() == data_path.alu.overflowFlag.decimal()) {
+				if (data_path.alu.negativeFlag.decimal() != data_path.alu.overflowFlag.decimal()) {
 					data_path.master_bus.store(data_path.IR.decimal(19, 0));
 					data_path.PC.load();
 				}

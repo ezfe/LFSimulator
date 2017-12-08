@@ -1,16 +1,12 @@
-
-build:
-	javac source/RAM.java
-	javac source/CPU.java
-	javac source/Controler.java
-	javac source/Simulation.java
-	javac source/Byte.java
-	javac source/Register.java
-	javac source/RegisterBank.java
-	javac source/Bus.java
+compile:
+	rm -rf build
+	mkdir build
+	javac -d build source/*.java
 
 run:
-	java Simulation
+	java -classpath build Simulation
 
-clean:
-	rm -f *.class
+javadoc:
+	rm -rf docs
+	mkdir docs
+	javadoc -d docs/ src/*.java
